@@ -198,6 +198,7 @@ export const Form1 = (): React.ReactElement => {
               </>
             )}
 
+            <div className={currentStep === 1 ? '' : 'display-none'}>
             <h2 id="business-details-heading" className="margin-top-2">Business / Facility Details</h2>
             <form.Field name="businessName">
               {(field) => (
@@ -296,7 +297,9 @@ export const Form1 = (): React.ReactElement => {
                 </form.Field>
               </div>
             </div>
+            </div>
 
+            <div className={currentStep === 2 ? '' : 'display-none'}>
             <h2 id="attachments-heading" className="margin-top-2">Attachments</h2>
             <form.Field name="attachmentUrl">
               {(field) => (
@@ -317,7 +320,9 @@ export const Form1 = (): React.ReactElement => {
                 />
               )}
             </form.Field>
+            </div>
 
+            <div className={currentStep === 3 ? '' : 'display-none'}>
             <h2 id="payment-heading" className="margin-top-2">Fees & Payment</h2>
             <form.Field name="paymentReference">
               {(field) => (
@@ -336,7 +341,9 @@ export const Form1 = (): React.ReactElement => {
                 />
               )}
             </form.Field>
+            </div>
 
+            <div className={currentStep === 4 ? '' : 'display-none'}>
             <h2 id="review-heading" className="margin-top-2">Review & Submit</h2>
             <form.Field name="certifyAcknowledgement">
               {(field) => (
@@ -349,6 +356,7 @@ export const Form1 = (): React.ReactElement => {
                 />
               )}
             </form.Field>
+            </div>
 
             <ButtonGroup id="form1-button-group">
               <form.Subscribe selector={(state) => [state.isSubmitting]}>
