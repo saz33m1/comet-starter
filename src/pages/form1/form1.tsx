@@ -326,26 +326,6 @@ export const Form1 = (): React.ReactElement => {
               )}
             </form.Field>
 
-            <form.Field name="phone">
-              {(field) => (
-                <TextInput
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  label="Phone Number"
-                  autoComplete="tel"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  errors={
-                    field.state.meta.errors.length > 0
-                      ? formatFieldError(field.state.meta.errors[0])
-                      : undefined
-                  }
-                />
-              )}
-            </form.Field>
-
             <ButtonGroup id="form1-button-group">
               <form.Subscribe selector={(state) => [state.isSubmitting]}>
                 {([isSubmitting]) => (
