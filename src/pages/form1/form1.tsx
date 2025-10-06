@@ -92,7 +92,7 @@ export const Form1 = (): React.ReactElement => {
     <div className="grid-container">
       <div className="grid-row">
         <div className="tablet:grid-col-8">
-          <h1>Form 1</h1>
+          <h1>Business License Application</h1>
           <div id="form1-steps" className="usa-step-indicator" aria-label="progress">
             <ol className="usa-step-indicator__segments">
               {steps.map((s, idx) => (
