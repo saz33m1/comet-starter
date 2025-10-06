@@ -115,64 +115,88 @@ export const Form1 = (): React.ReactElement => {
               form.handleSubmit();
             }}
           >
-            <form.Field name="firstName">
-              {(field) => (
-                <TextInput
-                  id="first-name"
-                  name="firstName"
-                  label="First Name"
-                  autoComplete="given-name"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  errors={
-                    field.state.meta.errors.length > 0
-                      ? formatFieldError(field.state.meta.errors[0])
-                      : undefined
-                  }
-                  autoFocus
-                />
-              )}
-            </form.Field>
+            {currentStep === 0 && (
+              <>
+                <form.Field name="firstName">
+                  {(field) => (
+                    <TextInput
+                      id="first-name"
+                      name="firstName"
+                      label="First Name"
+                      autoComplete="given-name"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                      autoFocus
+                    />
+                  )}
+                </form.Field>
 
-            <form.Field name="lastName">
-              {(field) => (
-                <TextInput
-                  id="last-name"
-                  name="lastName"
-                  label="Last Name"
-                  autoComplete="family-name"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  errors={
-                    field.state.meta.errors.length > 0
-                      ? formatFieldError(field.state.meta.errors[0])
-                      : undefined
-                  }
-                />
-              )}
-            </form.Field>
+                <form.Field name="lastName">
+                  {(field) => (
+                    <TextInput
+                      id="last-name"
+                      name="lastName"
+                      label="Last Name"
+                      autoComplete="family-name"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
 
-            <form.Field name="email">
-              {(field) => (
-                <TextInput
-                  id="email"
-                  name="email"
-                  type="email"
-                  label="Email"
-                  autoComplete="email"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  errors={
-                    field.state.meta.errors.length > 0
-                      ? formatFieldError(field.state.meta.errors[0])
-                      : undefined
-                  }
-                />
-              )}
-            </form.Field>
+                <form.Field name="email">
+                  {(field) => (
+                    <TextInput
+                      id="email"
+                      name="email"
+                      type="email"
+                      label="Email"
+                      autoComplete="email"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
+
+                <form.Field name="phone">
+                  {(field) => (
+                    <TextInput
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      label="Phone Number"
+                      autoComplete="tel"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
+              </>
+            )}
 
             <h2 id="business-details-heading" className="margin-top-2">Business / Facility Details</h2>
             <form.Field name="businessName">
