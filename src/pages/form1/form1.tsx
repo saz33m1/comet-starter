@@ -366,25 +366,10 @@ export const Form1 = (): React.ReactElement => {
 
             <ButtonGroup id="form1-button-group">
               <Button
-                id="form1-prev"
-                type="button"
-                variant="outline"
-                onClick={handlePrev}
-                disabled={currentStep === 0}
-              >
-                Previous
-              </Button>
-              <form.Subscribe selector={(state) => [state.isSubmitting]}>
-                {([isSubmitting]) => (
-                  <Button id="form1-next" type="button" onClick={handleNext} disabled={isSubmitting}>
-                    {currentStep < steps.length - 1 ? 'Next' : 'Submit'}
-                  </Button>
-                )}
-              </form.Subscribe>
-              <Button
                 id="form1-reset"
                 type="button"
                 variant="secondary"
+                className="margin-x-1"
                 onClick={() => {
                   form.reset();
                   setSubmitted(false);
@@ -392,6 +377,23 @@ export const Form1 = (): React.ReactElement => {
               >
                 Reset
               </Button>
+              <Button
+                id="form1-prev"
+                type="button"
+                variant="outline"
+                className="margin-x-1"
+                onClick={handlePrev}
+                disabled={currentStep === 0}
+              >
+                Previous
+              </Button>
+              <form.Subscribe selector={(state) => [state.isSubmitting]}>
+                {([isSubmitting]) => (
+                  <Button id="form1-next" type="button" className="margin-x-1" onClick={handleNext} disabled={isSubmitting}>
+                    {currentStep < steps.length - 1 ? 'Next' : 'Submit'}
+                  </Button>
+                )}
+              </form.Subscribe>
             </ButtonGroup>
           </Form>
         </div>
