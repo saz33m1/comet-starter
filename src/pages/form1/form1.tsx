@@ -8,6 +8,7 @@ interface Form1Input {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
 }
 
 export const Form1 = (): React.ReactElement => {
@@ -20,6 +21,10 @@ export const Form1 = (): React.ReactElement => {
       .string()
       .min(1, 'This field is required.')
       .email('Please enter a valid email address.'),
+    phone: z
+      .string()
+      .min(1, 'This field is required.')
+      .regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, 'Please enter a valid phone number.'),
   });
 
   const form = useForm({
@@ -27,6 +32,7 @@ export const Form1 = (): React.ReactElement => {
       firstName: '',
       lastName: '',
       email: '',
+      phone: '',
     } as Form1Input,
     validators: { onChange: formSchema },
     onSubmit: async () => {
@@ -100,6 +106,26 @@ export const Form1 = (): React.ReactElement => {
                   type="email"
                   label="Email"
                   autoComplete="email"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  errors={
+                    field.state.meta.errors.length > 0
+                      ? formatFieldError(field.state.meta.errors[0])
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
+
+            <form.Field name="phone">
+              {(field) => (
+                <TextInput
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  label="Phone Number"
+                  autoComplete="tel"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
