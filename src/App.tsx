@@ -29,6 +29,7 @@ export const App = (): React.ReactElement => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cases/:id" element={<CaseDetails />} />
           <Route path="/results" element={<SearchResults />} />
+          <Route path="/form1" element={<Form1 />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
