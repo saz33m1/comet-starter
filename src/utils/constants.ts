@@ -27,6 +27,10 @@ export const HEADER_LINKS_SIGNED_IN = [
     name: 'Dashboard',
     url: '/dashboard',
   },
+  {
+    name: 'Form 1',
+    url: '/form1',
+  },
 ];
 
 export const HEADER_LINKS_SIGNED_OUT = [
