@@ -40,6 +40,12 @@ export const Form1 = (): React.ReactElement => {
     }
   };
 
+  const handlePrev = (): void => {
+    if (currentStep > 0) {
+      setCurrentStep((s) => s - 1);
+    }
+  };
+
   const formSchema = z.object({
     firstName: z.string().min(1, 'This field is required.'),
     lastName: z.string().min(1, 'This field is required.'),
@@ -359,6 +365,15 @@ export const Form1 = (): React.ReactElement => {
             </div>
 
             <ButtonGroup id="form1-button-group">
+              <Button
+                id="form1-prev"
+                type="button"
+                variant="outline"
+                onClick={handlePrev}
+                disabled={currentStep === 0}
+              >
+                Previous
+              </Button>
               <form.Subscribe selector={(state) => [state.isSubmitting]}>
                 {([isSubmitting]) => (
                   <Button id="form1-next" type="button" onClick={handleNext} disabled={isSubmitting}>
