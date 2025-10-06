@@ -112,7 +112,7 @@ export const Form1 = (): React.ReactElement => {
               )}
             </form.Field>
 
-            <ButtonGroup>
+            <ButtonGroup id="form1-button-group">
               <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
                 {([canSubmit, isSubmitting]) => (
                   <Button id="form1-submit" type="submit" disabled={isSubmitting || !canSubmit}>
