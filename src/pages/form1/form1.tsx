@@ -21,6 +21,24 @@ interface Form1Input {
 
 export const Form1 = (): React.ReactElement => {
   const [submitted, setSubmitted] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const steps = [
+    { id: 'applicant', label: 'Applicant Information' },
+    { id: 'business', label: 'Business / Facility Details' },
+    { id: 'attachments', label: 'Attachments' },
+    { id: 'payment', label: 'Fees & Payment' },
+    { id: 'review', label: 'Review & Submit' },
+  ];
+  const handleNext = (): void => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep((s) => s + 1);
+    } else {
+      // Final step submits the form
+      // Using tanstack form submit handler
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      form.handleSubmit();
+    }
+  };
 
   const formSchema = z.object({
     firstName: z.string().min(1, 'This field is required.'),
@@ -71,21 +89,16 @@ export const Form1 = (): React.ReactElement => {
           <h1>Form 1</h1>
           <div id="form1-steps" className="usa-step-indicator" aria-label="progress">
             <ol className="usa-step-indicator__segments">
-              <li id="step-applicant" className="usa-step-indicator__segment usa-current" aria-current="true">
-                <span className="usa-step-indicator__segment-label">Applicant Information</span>
-              </li>
-              <li id="step-business" className="usa-step-indicator__segment">
-                <span className="usa-step-indicator__segment-label">Business / Facility Details</span>
-              </li>
-              <li id="step-attachments" className="usa-step-indicator__segment">
-                <span className="usa-step-indicator__segment-label">Attachments</span>
-              </li>
-              <li id="step-payment" className="usa-step-indicator__segment">
-                <span className="usa-step-indicator__segment-label">Fees & Payment</span>
-              </li>
-              <li id="step-review" className="usa-step-indicator__segment">
-                <span className="usa-step-indicator__segment-label">Review & Submit</span>
-              </li>
+              {steps.map((s, idx) => (
+                <li
+                  key={s.id}
+                  id={`step-${s.id}`}
+                  className={`usa-step-indicator__segment ${idx < currentStep ? 'usa-step-indicator__segment--complete' : ''} ${idx === currentStep ? 'usa-current' : ''}`}
+                  aria-current={idx === currentStep ? 'true' : undefined}
+                >
+                  <span className="usa-step-indicator__segment-label">{s.label}</span>
+                </li>
+              ))}
             </ol>
           </div>
           {submitted && (
@@ -334,10 +347,10 @@ export const Form1 = (): React.ReactElement => {
             </form.Field>
 
             <ButtonGroup id="form1-button-group">
-              <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-                {([canSubmit, isSubmitting]) => (
-                  <Button id="form1-submit" type="submit" disabled={isSubmitting || !canSubmit}>
-                    Submit
+              <form.Subscribe selector={(state) => [state.isSubmitting]}>
+                {([isSubmitting]) => (
+                  <Button id="form1-next" type="button" onClick={handleNext} disabled={isSubmitting}>
+                    {currentStep < steps.length - 1 ? 'Next' : 'Submit'}
                   </Button>
                 )}
               </form.Subscribe>
