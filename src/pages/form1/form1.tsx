@@ -1,4 +1,4 @@
-import { Alert, Button, ButtonGroup, Form, TextInput } from '@metrostar/comet-uswds';
+import { Alert, Button, ButtonGroup, Checkbox, Form, TextInput } from '@metrostar/comet-uswds';
 import { formatFieldError } from '@src/utils/form-utils';
 import { useForm } from '@tanstack/react-form';
 import React, { useState } from 'react';
@@ -9,6 +9,14 @@ interface Form1Input {
   lastName: string;
   email: string;
   phone: string;
+  businessName?: string;
+  addressLine1?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  attachmentUrl?: string;
+  paymentReference?: string;
+  certifyAcknowledgement?: boolean;
 }
 
 export const Form1 = (): React.ReactElement => {
@@ -25,6 +33,14 @@ export const Form1 = (): React.ReactElement => {
       .string()
       .min(1, 'This field is required.')
       .regex(/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/, 'Please enter a valid phone number.'),
+    businessName: z.string().optional().or(z.literal('')),
+    addressLine1: z.string().optional().or(z.literal('')),
+    city: z.string().optional().or(z.literal('')),
+    state: z.string().optional().or(z.literal('')),
+    zip: z.string().optional().or(z.literal('')),
+    attachmentUrl: z.string().url('Please enter a valid URL.').optional().or(z.literal('')),
+    paymentReference: z.string().optional().or(z.literal('')),
+    certifyAcknowledgement: z.boolean().optional(),
   });
 
   const form = useForm({
@@ -33,6 +49,14 @@ export const Form1 = (): React.ReactElement => {
       lastName: '',
       email: '',
       phone: '',
+      businessName: '',
+      addressLine1: '',
+      city: '',
+      state: '',
+      zip: '',
+      attachmentUrl: '',
+      paymentReference: '',
+      certifyAcknowledgement: false,
     } as Form1Input,
     validators: { onChange: formSchema },
     onSubmit: async () => {
@@ -45,6 +69,25 @@ export const Form1 = (): React.ReactElement => {
       <div className="grid-row">
         <div className="tablet:grid-col-8">
           <h1>Form 1</h1>
+          <div id="form1-steps" className="usa-step-indicator" aria-label="progress">
+            <ol className="usa-step-indicator__segments">
+              <li id="step-applicant" className="usa-step-indicator__segment usa-current" aria-current="true">
+                <span className="usa-step-indicator__segment-label">Applicant Information</span>
+              </li>
+              <li id="step-business" className="usa-step-indicator__segment">
+                <span className="usa-step-indicator__segment-label">Business / Facility Details</span>
+              </li>
+              <li id="step-attachments" className="usa-step-indicator__segment">
+                <span className="usa-step-indicator__segment-label">Attachments</span>
+              </li>
+              <li id="step-payment" className="usa-step-indicator__segment">
+                <span className="usa-step-indicator__segment-label">Fees & Payment</span>
+              </li>
+              <li id="step-review" className="usa-step-indicator__segment">
+                <span className="usa-step-indicator__segment-label">Review & Submit</span>
+              </li>
+            </ol>
+          </div>
           {submitted && (
             <Alert id="form1-success" type="success" heading="Success">
               Your information has been submitted.
@@ -114,6 +157,158 @@ export const Form1 = (): React.ReactElement => {
                       ? formatFieldError(field.state.meta.errors[0])
                       : undefined
                   }
+                />
+              )}
+            </form.Field>
+
+            <h2 id="business-details-heading" className="margin-top-2">Business / Facility Details</h2>
+            <form.Field name="businessName">
+              {(field) => (
+                <TextInput
+                  id="business-name"
+                  name="businessName"
+                  label="Business or Facility Name"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  errors={
+                    field.state.meta.errors.length > 0
+                      ? formatFieldError(field.state.meta.errors[0])
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
+            <form.Field name="addressLine1">
+              {(field) => (
+                <TextInput
+                  id="address-line1"
+                  name="addressLine1"
+                  label="Street Address"
+                  autoComplete="address-line1"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  errors={
+                    field.state.meta.errors.length > 0
+                      ? formatFieldError(field.state.meta.errors[0])
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
+            <div className="grid-row grid-gap">
+              <div className="grid-col-6">
+                <form.Field name="city">
+                  {(field) => (
+                    <TextInput
+                      id="city"
+                      name="city"
+                      label="City"
+                      autoComplete="address-level2"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
+              </div>
+              <div className="grid-col-3">
+                <form.Field name="state">
+                  {(field) => (
+                    <TextInput
+                      id="state"
+                      name="state"
+                      label="State"
+                      autoComplete="address-level1"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
+              </div>
+              <div className="grid-col-3">
+                <form.Field name="zip">
+                  {(field) => (
+                    <TextInput
+                      id="zip"
+                      name="zip"
+                      label="ZIP Code"
+                      autoComplete="postal-code"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                      errors={
+                        field.state.meta.errors.length > 0
+                          ? formatFieldError(field.state.meta.errors[0])
+                          : undefined
+                      }
+                    />
+                  )}
+                </form.Field>
+              </div>
+            </div>
+
+            <h2 id="attachments-heading" className="margin-top-2">Attachments</h2>
+            <form.Field name="attachmentUrl">
+              {(field) => (
+                <TextInput
+                  id="attachment-url"
+                  name="attachmentUrl"
+                  type="url"
+                  label="Attachment URL"
+                  hint="Provide a link to supporting documents (PDF, images)"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  errors={
+                    field.state.meta.errors.length > 0
+                      ? formatFieldError(field.state.meta.errors[0])
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
+
+            <h2 id="payment-heading" className="margin-top-2">Fees & Payment</h2>
+            <form.Field name="paymentReference">
+              {(field) => (
+                <TextInput
+                  id="payment-reference"
+                  name="paymentReference"
+                  label="Payment Reference Number"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  errors={
+                    field.state.meta.errors.length > 0
+                      ? formatFieldError(field.state.meta.errors[0])
+                      : undefined
+                  }
+                />
+              )}
+            </form.Field>
+
+            <h2 id="review-heading" className="margin-top-2">Review & Submit</h2>
+            <form.Field name="certifyAcknowledgement">
+              {(field) => (
+                <Checkbox
+                  id="certify-ack"
+                  name="certifyAcknowledgement"
+                  label="I certify the information provided is true and correct."
+                  checked={Boolean(field.state.value)}
+                  onChange={(e) => field.handleChange(e.target.checked)}
                 />
               )}
             </form.Field>
