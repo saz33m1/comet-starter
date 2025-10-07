@@ -23,6 +23,8 @@ export const ApplicationDetails = (): React.ReactElement => {
   useEffect(() => {
     if (data?.steps?.length) {
       setExpandedSteps([data.steps[0].id]);
+    } else {
+      setExpandedSteps([]);
     }
   }, [data]);
 
