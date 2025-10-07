@@ -4,10 +4,10 @@ import { Card, CardBody, Icon } from '@metrostar/comet-uswds';
 import useApplicationsApi from '@src/hooks/use-applications-api';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ApplicationStep } from '@src/types';
+import { ApplicationStep, ApplicationStatusType } from '@src/types';
 import './application-details.scss';
 
-const statusClassMap: Record<string, string> = {
+const statusClassMap: Partial<Record<ApplicationStatusType, string>> = {
   Approved: 'usa-tag bg-success-lighter text-success-darker text-uppercase',
   Reviewed: 'usa-tag bg-success-lighter text-success-darker text-uppercase',
   Submitted: 'usa-tag bg-warning-lighter text-warning-dark text-uppercase',
@@ -92,7 +92,11 @@ export const ApplicationDetails = (): React.ReactElement => {
 
               <section aria-label="Application submission details" className="application-details__steps">
                 <h2 className="application-details__steps-title">Submission Details</h2>
-                <div className="usa-accordion" data-testid="application-details-accordion">
+                <div
+                  className="usa-accordion"
+                  aria-multiselectable="true"
+                  data-testid="application-details-accordion"
+                >
                   {formattedSteps.map((step, index) => {
                     const isOpen = expandedSteps.includes(step.id);
                     const buttonId = `application-step-button-${step.id}`;
