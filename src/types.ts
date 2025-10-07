@@ -63,6 +63,18 @@ export type ApplicationType =
 
 export type ApplicationStatusType = 'Submitted' | 'Reviewed' | 'Approved' | 'Rejected';
 
+export interface ApplicationStepField {
+  label: string;
+  value: string;
+}
+
+export interface ApplicationStep {
+  id: string;
+  title: string;
+  description?: string;
+  fields: ApplicationStepField[];
+}
+
 export interface Application {
   id: number;
   type: ApplicationType;
@@ -70,6 +82,9 @@ export interface Application {
   submission_date: Date;
   applicant_name?: string;
   description?: string;
+  reference_number?: string;
+  submission_channel?: string;
+  steps: ApplicationStep[];
 }
 
 export interface ApplicationItems {
