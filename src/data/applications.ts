@@ -299,6 +299,6 @@ export const applications: Application[] = [
   },
 ];
 
-export const applicationData = {
+export const applicationData: ApplicationItems = {
   items: applications,
 };
