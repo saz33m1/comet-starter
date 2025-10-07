@@ -1,5 +1,5 @@
 import { Spinner } from '@metrostar/comet-extras';
-import { Card, CardBody, Button } from '@metrostar/comet-uswds';
+import { Card, CardBody } from '@metrostar/comet-uswds';
 import useCasesApi from '@src/hooks/use-cases-api';
 import React from 'react';
 import ErrorNotification from '../../components/error-notification/error-notification';
