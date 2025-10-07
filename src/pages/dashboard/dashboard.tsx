@@ -25,7 +25,7 @@ export const Dashboard = (): React.ReactElement => {
           {isLoading ? (
             <Spinner id="spinner" type="small" loadingText="Loading..." />
           ) : (
-            <ApplicationsTable />
+            <ApplicationsTable cases={items} />
           )}
         </CardBody>
       </Card>
