@@ -31,7 +31,7 @@ export const Dashboard = (): React.ReactElement => {
       )}
 
       <Card id="applications-card" className="dashboard-card">
-        <CardBody className="dashboard-card__body">
+        <CardBody>
           {isLoading ? (
             <CometSpinner id="spinner" type="small" loadingText="Loading..." />
           ) : (
