@@ -43,17 +43,17 @@ describe('Dashboard', () => {
     queryClient.setQueryData(['cases'], caseData.items);
 
     const { baseElement } = render(componentWrapper);
-    await act(async () => {
-      expect(baseElement).toBeTruthy();
+
+    await waitFor(() => {
+      expect(baseElement.querySelector('h1')?.textContent).toEqual(
+        'My Applications',
+      );
     });
 
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
-    );
     expect(baseElement.querySelector('.usa-table')).toBeDefined();
     expect(
       baseElement.querySelectorAll('.usa-table > tbody > tr'),
-    ).toHaveLength(0);
+    ).toHaveLength(6);
   });
 
   test('should render loading state while fetching data', async () => {
@@ -71,12 +71,7 @@ describe('Dashboard', () => {
     const { baseElement } = render(componentWrapper);
 
     // Immediately after rendering, we should see the loading state
-    expect(baseElement).toBeTruthy();
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
-    );
-
-    // Check for loading spinner or indicator
+    expect(baseElement.querySelector('h1')).toBeNull();
     expect(baseElement.querySelector('#spinner')).toBeDefined();
     expect(baseElement.querySelector('.usa-table')).toBeNull();
 
@@ -84,6 +79,9 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(baseElement.querySelector('#spinner')).toBeNull();
       expect(baseElement.querySelector('.usa-table')).toBeDefined();
+      expect(baseElement.querySelector('h1')?.textContent).toEqual(
+        'My Applications',
+      );
     });
   });
 
@@ -92,13 +90,14 @@ describe('Dashboard', () => {
     queryClient.setQueryData(['cases'], null);
 
     const { baseElement } = render(componentWrapper);
-    await act(async () => {
-      expect(baseElement).toBeTruthy();
+
+    await waitFor(() => {
+      expect(baseElement.querySelector('.usa-alert--error')).toBeDefined();
     });
+
     expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
+      'My Applications',
     );
     expect(baseElement.querySelector('.usa-alert')).toBeDefined();
-    expect(baseElement.querySelector('.usa-alert--error')).toBeDefined();
   });
 });
