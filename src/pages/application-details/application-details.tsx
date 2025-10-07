@@ -97,48 +97,52 @@ export const ApplicationDetails = (): React.ReactElement => {
                   aria-multiselectable="true"
                   data-testid="application-details-accordion"
                 >
-                  {formattedSteps.map((step, index) => {
-                    const isOpen = expandedSteps.includes(step.id);
-                    const buttonId = `application-step-button-${step.id}`;
-                    const panelId = `application-step-panel-${step.id}`;
+                  {formattedSteps.length > 0 ? (
+                    formattedSteps.map((step, index) => {
+                      const isOpen = expandedSteps.includes(step.id);
+                      const buttonId = `application-step-button-${step.id}`;
+                      const panelId = `application-step-panel-${step.id}`;
 
-                    return (
-                      <div className="application-details__step" key={step.id}>
-                        <h3 className="usa-accordion__heading">
-                          <button
-                            id={buttonId}
-                            type="button"
-                            className="usa-accordion__button"
-                            aria-expanded={isOpen}
-                            aria-controls={panelId}
-                            onClick={() => toggleStep(step.id)}
+                      return (
+                        <div className="application-details__step" key={step.id}>
+                          <h3 className="usa-accordion__heading">
+                            <button
+                              id={buttonId}
+                              type="button"
+                              className="usa-accordion__button"
+                              aria-expanded={isOpen}
+                              aria-controls={panelId}
+                              onClick={() => toggleStep(step.id)}
+                            >
+                              <span className="application-details__step-count">Step {index + 1}</span>
+                              <span className="application-details__step-title">{step.title}</span>
+                            </button>
+                          </h3>
+                          <div
+                            id={panelId}
+                            className="usa-accordion__content application-details__step-content"
+                            role="region"
+                            aria-labelledby={buttonId}
+                            hidden={!isOpen}
                           >
-                            <span className="application-details__step-count">Step {index + 1}</span>
-                            <span className="application-details__step-title">{step.title}</span>
-                          </button>
-                        </h3>
-                        <div
-                          id={panelId}
-                          className="usa-accordion__content application-details__step-content"
-                          role="region"
-                          aria-labelledby={buttonId}
-                          hidden={!isOpen}
-                        >
-                          {step.description && (
-                            <p className="application-details__step-description">{step.description}</p>
-                          )}
-                          <dl className="application-details__fields">
-                            {step.fields.map((field) => (
-                              <div className="application-details__field" key={`${step.id}-${field.label}`}>
-                                <dt className="application-details__field-label">{field.label}</dt>
-                                <dd className="application-details__field-value">{field.value}</dd>
-                              </div>
-                            ))}
-                          </dl>
+                            {step.description && (
+                              <p className="application-details__step-description">{step.description}</p>
+                            )}
+                            <dl className="application-details__fields">
+                              {step.fields.map((field) => (
+                                <div className="application-details__field" key={`${step.id}-${field.label}`}>
+                                  <dt className="application-details__field-label">{field.label}</dt>
+                                  <dd className="application-details__field-value">{field.value}</dd>
+                                </div>
+                              ))}
+                            </dl>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })
+                  ) : (
+                    <p className="application-details__no-steps">No submission details available.</p>
+                  )}
                 </div>
               </section>
             </>
