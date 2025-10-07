@@ -1,5 +1,4 @@
 import { Spinner } from '@metrostar/comet-extras';
-import { Spinner } from '@metrostar/comet-extras';
 import { Card, CardBody, Icon } from '@metrostar/comet-uswds';
 import useApplicationsApi from '@src/hooks/use-applications-api';
 import React, { useEffect, useMemo, useState } from 'react';
