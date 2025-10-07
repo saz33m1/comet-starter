@@ -29,6 +29,14 @@ interface ApplicationTableData {
   actions: React.ReactElement;
 }
 
+const APPLICATION_TYPE_ORDER = [
+  'Building Permit',
+  'Business License',
+  'Professional Certification',
+  'Event Permit',
+  'Zoning Variance',
+];
+
 const SAMPLE_ROWS: ApplicationRow[] = [
   {
     id: 1001,
