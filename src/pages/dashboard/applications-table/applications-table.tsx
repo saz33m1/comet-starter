@@ -37,6 +37,8 @@ const APPLICATION_TYPE_ORDER = [
   'Zoning Variance',
 ];
 
+const MAX_APPLICATION_ROWS = 6;
+
 const SAMPLE_ROWS: ApplicationRow[] = [
   {
     id: 1001,
@@ -74,8 +76,8 @@ const SAMPLE_ROWS: ApplicationRow[] = [
     id: 1005,
     applicationType: 'Zoning Variance',
     submissionDate: '01/12/2024',
-    status: 'Reviewed',
-    slaStatus: 'In Progress (4 days left)',
+    status: 'Rejected',
+    slaStatus: 'Not Met',
     detailsUrl: '/cases/1000006',
   },
   {
@@ -85,14 +87,6 @@ const SAMPLE_ROWS: ApplicationRow[] = [
     status: 'Approved',
     slaStatus: 'Met',
     detailsUrl: '/cases/1000007',
-  },
-  {
-    id: 1007,
-    applicationType: 'Business License',
-    submissionDate: '11/30/2023',
-    status: 'Submitted',
-    slaStatus: 'In Progress (10 days left)',
-    detailsUrl: '/cases/1000008',
   },
 ];
 
@@ -183,7 +177,8 @@ export const ApplicationsTable = ({ cases, onNew }: ApplicationsTableProps): Rea
 
   useEffect(() => {
     const sourceRows = cases && cases.length > 0 ? mapCasesToApplicationRows(cases) : SAMPLE_ROWS;
-    const mapped = sourceRows.map((row) => ({
+    const limited = sourceRows.slice(0, MAX_APPLICATION_ROWS);
+    const mapped = limited.map((row) => ({
       applicationType: row.applicationType,
       submissionDate: row.submissionDate,
       status: getStatusTag(row.status),
