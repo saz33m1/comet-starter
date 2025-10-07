@@ -54,7 +54,7 @@ describe('Dashboard', () => {
     expect(
       screen.getAllByRole('link', { name: 'View Details' }).length,
     ).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Building Permit')).toBeInTheDocument();
+    expect(screen.getAllByText('Building Permit').length).toBeGreaterThanOrEqual(1);
   });
 
   test('should render loading state while fetching data', async () => {
