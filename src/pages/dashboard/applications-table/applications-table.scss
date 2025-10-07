@@ -1,0 +1,43 @@
+.applications-section {
+  width: 100%;
+}
+
+.applications-header {
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.applications-header h1 {
+  margin: 0;
+}
+
+.applications-header__cta {
+  margin-left: auto;
+}
+
+.applications-summary {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.applications-summary h2 {
+  margin-bottom: 1rem;
+}
+
+.applications-summary .usa-table,
+.applications-summary table {
+  min-width: 640px;
+}
+
+@media screen and (max-width: 1024px) {
+  .applications-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .applications-header__cta {
+    margin-left: 0;
+    width: 100%;
+  }
+}
