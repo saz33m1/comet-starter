@@ -1,16 +1,18 @@
 import { DataTable } from '@metrostar/comet-extras';
-import { Button } from '@metrostar/comet-uswds';
-import React from 'react';
+import { Button, Icon } from '@metrostar/comet-uswds';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
 import { NavLink } from 'react-router-dom';
 
+export type ApplicationCategory = 'Permit' | 'License' | 'Certification';
 export type ApplicationStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface ApplicationRow {
   id: number;
-  type: string; // Permit, License, Certification
-  submissionDate: string; // MM/DD/YYYY
+  applicationType: string;
+  submissionDate: string;
   status: ApplicationStatus;
-  slaStatus: string; // Met, In Progress, Not Met, At Risk
+  slaStatus: string;
   detailsUrl: string;
 }
 
@@ -19,11 +21,18 @@ interface ApplicationsTableProps {
   onNew?: () => void;
 }
 
-// Basic sample data to display when no items provided
+interface ApplicationTableData {
+  applicationType: string;
+  submissionDate: string;
+  status: React.ReactElement;
+  slaStatus: React.ReactElement;
+  actions: React.ReactElement;
+}
+
 const SAMPLE_ROWS: ApplicationRow[] = [
   {
     id: 1001,
-    type: 'Building Permit',
+    applicationType: 'Building Permit',
     submissionDate: '03/15/2024',
     status: 'Approved',
     slaStatus: 'Met',
@@ -31,7 +40,7 @@ const SAMPLE_ROWS: ApplicationRow[] = [
   },
   {
     id: 1002,
-    type: 'Business License',
+    applicationType: 'Business License',
     submissionDate: '02/20/2024',
     status: 'Pending',
     slaStatus: 'In Progress (5 days left)',
@@ -39,7 +48,7 @@ const SAMPLE_ROWS: ApplicationRow[] = [
   },
   {
     id: 1003,
-    type: 'Professional Certification',
+    applicationType: 'Professional Certification',
     submissionDate: '01/10/2024',
     status: 'Rejected',
     slaStatus: 'Not Met',
@@ -47,7 +56,7 @@ const SAMPLE_ROWS: ApplicationRow[] = [
   },
   {
     id: 1004,
-    type: 'Event Permit',
+    applicationType: 'Event Permit',
     submissionDate: '12/05/2023',
     status: 'Approved',
     slaStatus: 'Met',
@@ -55,7 +64,7 @@ const SAMPLE_ROWS: ApplicationRow[] = [
   },
   {
     id: 1005,
-    type: 'Zoning Variance',
+    applicationType: 'Zoning Variance',
     submissionDate: '11/15/2023',
     status: 'Pending',
     slaStatus: 'At Risk (2 days left)',
@@ -63,55 +72,108 @@ const SAMPLE_ROWS: ApplicationRow[] = [
   },
 ];
 
-export const ApplicationsTable = ({ items, onNew }: ApplicationsTableProps): React.ReactElement => {
-  const data = items && items.length > 0 ? items : SAMPLE_ROWS;
-
-  const columns = [
-    {
-      header: 'Application Type',
-      accessorKey: 'type',
-      cell: (info: any) => info.getValue(),
-    },
-    {
-      header: 'Submission Date',
-      accessorKey: 'submissionDate',
-      cell: (info: any) => info.getValue(),
-    },
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      cell: (info: any) => info.getValue(),
-    },
-    {
-      header: 'SLA Status',
-      accessorKey: 'slaStatus',
-      cell: (info: any) => info.getValue(),
-    },
-    {
-      header: 'Actions',
-      accessorKey: 'detailsUrl',
-      cell: (info: any) => {
-        const url = info.getValue() as string;
-        return (
-          <NavLink id={`application-details-${info.row.index}`} to={url}>
-            View Details
-          </NavLink>
-        );
-      },
-    },
-  ];
+const getStatusTag = (status: ApplicationStatus): React.ReactElement => {
+  const statusClass = {
+    Approved: 'bg-success-darker',
+    Pending: 'bg-warning-dark',
+    Rejected: 'bg-error-dark',
+  }[status];
 
   return (
-    <div>
-      <div className="display-flex flex-justify">
-        <div>
-          <h1>My Applications</h1>
-        </div>
-        <div>
-          <Button id="new-application" type="button">
-            New Application
-          </Button>
-        </div>
+    <span className={`usa-tag text-uppercase ${statusClass}`} data-testid={`status-${status.toLowerCase()}`}>
+      {status}
+    </span>
+  );
+};
+
+const getSlaIndicator = (slaStatus: string, index: number): React.ReactElement => {
+  const normalized = slaStatus.toLowerCase();
+  let iconType = 'check_circle';
+  let iconClass = 'text-success';
+
+  if (normalized.includes('not met')) {
+    iconType = 'cancel';
+    iconClass = 'text-error';
+  } else if (normalized.includes('progress')) {
+    iconType = 'schedule';
+    iconClass = 'text-warning';
+  } else if (normalized.includes('risk')) {
+    iconType = 'warning';
+    iconClass = 'text-warning-darker';
+  }
+
+  return (
+    <span className="display-flex flex-align-center gap-1">
+      <Icon id={`sla-icon-${index}`} type={iconType} className={iconClass} />
+      <span>{slaStatus}</span>
+    </span>
+  );
+};
+
+export const ApplicationsTable = ({ items, onNew }: ApplicationsTableProps): React.ReactElement => {
+  const [data, setData] = useState<ApplicationTableData[]>([]);
+  const rows = items && items.length > 0 ? items : SAMPLE_ROWS;
+
+  useEffect(() => {
+    const mapped = rows.map((row, idx) => ({
+      applicationType: row.applicationType,
+      submissionDate: row.submissionDate,
+      status: getStatusTag(row.status),
+      slaStatus: getSlaIndicator(row.slaStatus, idx),
+      actions: (
+        <NavLink id={`application-details-${row.id}`} to={row.detailsUrl}>
+          View Details
+        </NavLink>
+      ),
+    }));
+    setData(mapped);
+  }, [rows]);
+
+  const columns = useMemo<ColumnDef<ApplicationTableData>[]>(
+    () => [
+      {
+        accessorKey: 'applicationType',
+        header: 'Application Type',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'submissionDate',
+        header: 'Submission Date',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'slaStatus',
+        header: 'SLA Status',
+        cell: (info) => info.getValue(),
+      },
+      {
+        accessorKey: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        cell: (info) => info.getValue(),
+      },
+    ],
+    [],
+  );
+
+  return (
+    <section aria-labelledby="applications-heading">
+      <div className="display-flex flex-justify flex-align-center">
+        <h1 id="applications-heading">My Applications</h1>
+        <Button
+          id="new-application"
+          type="button"
+          onClick={onNew}
+          className="margin-left-2"
+        >
+          <Icon id="new-application-icon" type="add" className="margin-right-05" />
+          New Application
+        </Button>
       </div>
 
       <div className="margin-top-2">
@@ -119,13 +181,15 @@ export const ApplicationsTable = ({ items, onNew }: ApplicationsTableProps): Rea
         <DataTable
           id="applications-table"
           className="width-full"
-          columns={columns as any}
-          data={data as any}
+          columns={columns}
+          data={data}
           sortable
+          sortCol="applicationType"
+          sortDir="asc"
           pageable
         />
       </div>
-    </div>
+    </section>
   );
 };
 
