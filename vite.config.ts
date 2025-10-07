@@ -89,6 +89,8 @@ export default defineConfig({
               );
             }
           });
+
+          return;
         },
       },
       '/api': {
