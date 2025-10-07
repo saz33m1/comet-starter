@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Case, Application } from '@src/types';
+import './applications-table.scss';
 
 export type ApplicationStatus = 'Approved' | 'Reviewed' | 'Submitted' | 'Rejected';
 
@@ -208,7 +209,7 @@ export const ApplicationsTable = ({ cases, applications, onNew }: ApplicationsTa
       ),
     }));
     setData(mapped);
-  }, [cases]);
+  }, [applications, cases]);
 
   const columns = useMemo<ColumnDef<ApplicationTableData>[]>(
     () => [
@@ -243,21 +244,16 @@ export const ApplicationsTable = ({ cases, applications, onNew }: ApplicationsTa
   );
 
   return (
-    <section aria-labelledby="applications-heading">
-      <div className="display-flex flex-justify flex-align-center">
+    <section className="applications-section" aria-labelledby="applications-heading">
+      <div className="applications-header display-flex flex-align-center">
         <h1 id="applications-heading">My Applications</h1>
-        <Button
-          id="new-application"
-          type="button"
-          onClick={onNew}
-          className="margin-left-2"
-        >
+        <Button id="new-application" type="button" onClick={onNew} className="applications-header__cta">
           <Icon id="new-application-icon" type="add" className="margin-right-05" />
           New Application
         </Button>
       </div>
 
-      <div className="margin-top-2">
+      <div className="applications-summary margin-top-2">
         <h2>Application Summary</h2>
         <DataTable
           id="applications-table"
