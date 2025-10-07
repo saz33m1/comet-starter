@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Case } from '@src/types';
 
-export type ApplicationStatus = 'Approved' | 'Pending' | 'Rejected';
+export type ApplicationStatus = 'Approved' | 'Reviewed' | 'Submitted' | 'Rejected';
 
 export interface ApplicationRow {
   id: number;
@@ -42,48 +42,65 @@ const SAMPLE_ROWS: ApplicationRow[] = [
     id: 1001,
     applicationType: 'Building Permit',
     submissionDate: '03/15/2024',
-    status: 'Approved',
-    slaStatus: 'Met',
+    status: 'Submitted',
+    slaStatus: 'In Progress (7 days left)',
     detailsUrl: '/cases/1000002',
   },
   {
     id: 1002,
     applicationType: 'Business License',
-    submissionDate: '02/20/2024',
-    status: 'Pending',
-    slaStatus: 'In Progress (5 days left)',
+    submissionDate: '02/28/2024',
+    status: 'Reviewed',
+    slaStatus: 'At Risk (3 days left)',
     detailsUrl: '/cases/1000003',
   },
   {
     id: 1003,
     applicationType: 'Professional Certification',
-    submissionDate: '01/10/2024',
-    status: 'Rejected',
-    slaStatus: 'Not Met',
+    submissionDate: '02/10/2024',
+    status: 'Approved',
+    slaStatus: 'Met',
     detailsUrl: '/cases/1000004',
   },
   {
     id: 1004,
     applicationType: 'Event Permit',
-    submissionDate: '12/05/2023',
-    status: 'Approved',
-    slaStatus: 'Met',
+    submissionDate: '01/29/2024',
+    status: 'Rejected',
+    slaStatus: 'Not Met',
     detailsUrl: '/cases/1000005',
   },
   {
     id: 1005,
     applicationType: 'Zoning Variance',
-    submissionDate: '11/15/2023',
-    status: 'Pending',
-    slaStatus: 'At Risk (2 days left)',
+    submissionDate: '01/12/2024',
+    status: 'Reviewed',
+    slaStatus: 'In Progress (4 days left)',
     detailsUrl: '/cases/1000006',
+  },
+  {
+    id: 1006,
+    applicationType: 'Building Permit',
+    submissionDate: '12/20/2023',
+    status: 'Approved',
+    slaStatus: 'Met',
+    detailsUrl: '/cases/1000007',
+  },
+  {
+    id: 1007,
+    applicationType: 'Business License',
+    submissionDate: '11/30/2023',
+    status: 'Submitted',
+    slaStatus: 'In Progress (10 days left)',
+    detailsUrl: '/cases/1000008',
   },
 ];
 
 const getStatusTag = (status: ApplicationStatus): React.ReactElement => {
   const statusClass = {
     Approved: 'bg-success-lighter text-success-darker',
-    Pending: 'bg-warning-lighter text-warning-dark',
+    Reviewed: 'bg-success-lighter text-success-darker',
+    Submitted: 'bg-warning-lighter text-warning-dark',
     Rejected: 'bg-error-lighter text-error-dark',
   }[status];
 
@@ -125,9 +142,10 @@ const mapCaseStatusToApplicationStatus = (status: Case['status']): ApplicationSt
     case 'Denied':
       return 'Rejected';
     case 'In Progress':
+      return 'Reviewed';
     case 'Not Started':
     default:
-      return 'Pending';
+      return 'Submitted';
   }
 };
 
