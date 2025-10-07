@@ -54,21 +54,42 @@ export default defineConfig({
           });
 
           req.on('end', () => {
-            const validUses = ['admin', 'test'];
-            const body = JSON.parse(data);
-            const username = body.username;
+            const allowedUsernames = new Set(['admin', 'test']);
 
-            if (!validUses.includes(username)) {
-              return;
+            try {
+              const body = data ? JSON.parse(data) : {};
+              const username = body?.username ?? '';
+
+              if (!allowedUsernames.has(username)) {
+                res.statusCode = 401;
+                res.end(
+                  JSON.stringify({
+                    message: 'Invalid username or password.',
+                  }),
+                );
+                return;
+              }
+
+              res.statusCode = 200;
+              res.end(
+                JSON.stringify({
+                  first_name: 'Test',
+                  last_name: 'User',
+                  display_name: 'Test User',
+                  email_address: 'test.user@example.com',
+                  phone_number: '555-555-5555',
+                }),
+              );
+            } catch (error) {
+              res.statusCode = 400;
+              res.end(
+                JSON.stringify({
+                  message: 'Invalid request body.',
+                }),
+              );
             }
-
-            res.end(
-              JSON.stringify({
-                first_name: 'Test',
-                last_name: 'User',
-              }),
-            );
           });
+
           return;
         },
       },

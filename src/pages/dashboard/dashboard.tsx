@@ -3,6 +3,8 @@ import { Card, CardBody } from '@metrostar/comet-uswds';
 import useCasesApi from '@src/hooks/use-cases-api';
 import useApplicationsApi from '@src/hooks/use-applications-api';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Spinner as CometSpinner } from '@metrostar/comet-extras';
 import ErrorNotification from '../../components/error-notification/error-notification';
 import ApplicationsTable from './applications-table/applications-table';
 
@@ -14,6 +16,8 @@ export const Dashboard = (): React.ReactElement => {
   const {
     getApplications: { data: apps },
   } = useApplicationsApi();
+
+  const navigate = useNavigate();
 
   return (
     <div className="grid-container">
@@ -28,9 +32,9 @@ export const Dashboard = (): React.ReactElement => {
       <Card id="applications-card">
         <CardBody>
           {isLoading ? (
-            <Spinner id="spinner" type="small" loadingText="Loading..." />
+            <CometSpinner id="spinner" type="small" loadingText="Loading..." />
           ) : (
-            <ApplicationsTable applications={apps} />
+            <ApplicationsTable applications={apps} onNew={() => navigate('/form1')} />
           )}
         </CardBody>
       </Card>
