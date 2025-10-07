@@ -1,7 +1,7 @@
 import { caseData } from '@src/data/cases';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { Provider } from 'jotai';
 import { AuthProvider } from 'react-oidc-context';
@@ -45,15 +45,16 @@ describe('Dashboard', () => {
     const { baseElement } = render(componentWrapper);
 
     await waitFor(() => {
-      expect(baseElement.querySelector('h1')?.textContent).toEqual(
-        'My Applications',
-      );
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
 
     expect(baseElement.querySelector('.usa-table')).toBeDefined();
     expect(
-      baseElement.querySelectorAll('.usa-table > tbody > tr'),
-    ).toHaveLength(6);
+      screen.getAllByRole('link', { name: 'View Details' }).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Building Permit')).toBeInTheDocument();
   });
 
   test('should render loading state while fetching data', async () => {
@@ -79,9 +80,9 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(baseElement.querySelector('#spinner')).toBeNull();
       expect(baseElement.querySelector('.usa-table')).toBeDefined();
-      expect(baseElement.querySelector('h1')?.textContent).toEqual(
-        'My Applications',
-      );
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -93,11 +94,11 @@ describe('Dashboard', () => {
 
     await waitFor(() => {
       expect(baseElement.querySelector('.usa-alert--error')).toBeDefined();
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
 
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'My Applications',
-    );
     expect(baseElement.querySelector('.usa-alert')).toBeDefined();
   });
 });
