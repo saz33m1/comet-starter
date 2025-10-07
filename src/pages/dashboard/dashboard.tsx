@@ -1,10 +1,10 @@
 import { Spinner } from '@metrostar/comet-extras';
-import { Spinner } from '@metrostar/comet-extras';
 import { Card, CardBody } from '@metrostar/comet-uswds';
 import useCasesApi from '@src/hooks/use-cases-api';
 import useApplicationsApi from '@src/hooks/use-applications-api';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Spinner } from '@metrostar/comet-extras';
 import ErrorNotification from '../../components/error-notification/error-notification';
 import ApplicationsTable from './applications-table/applications-table';
 
