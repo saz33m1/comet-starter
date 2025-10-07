@@ -7,10 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { Spinner as CometSpinner } from '@metrostar/comet-extras';
 import ErrorNotification from '../../components/error-notification/error-notification';
 import ApplicationsTable from './applications-table/applications-table';
+import './dashboard.scss';
 
 export const Dashboard = (): React.ReactElement => {
   const {
-    getCases: { isLoading, data: items, error, isError },
+    getCases: { isLoading, error, isError },
   } = useCasesApi();
 
   const {
@@ -20,7 +21,7 @@ export const Dashboard = (): React.ReactElement => {
   const navigate = useNavigate();
 
   return (
-    <div className="grid-container">
+    <div className="grid-container dashboard-layout">
       {isError && (
         <div className="grid-row padding-bottom-2">
           <div className="grid-col">
@@ -29,8 +30,8 @@ export const Dashboard = (): React.ReactElement => {
         </div>
       )}
 
-      <Card id="applications-card">
-        <CardBody>
+      <Card id="applications-card" className="dashboard-card">
+        <CardBody className="dashboard-card__body">
           {isLoading ? (
             <CometSpinner id="spinner" type="small" loadingText="Loading..." />
           ) : (
