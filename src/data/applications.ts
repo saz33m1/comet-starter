@@ -1,4 +1,4 @@
-import { Application } from '@src/types';
+import { Application, ApplicationItems } from '@src/types';
 
 export const applications: Application[] = [
   {
