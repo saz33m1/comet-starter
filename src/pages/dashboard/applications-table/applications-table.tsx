@@ -1,10 +1,10 @@
 import { DataTable } from '@metrostar/comet-extras';
 import { Button, Icon } from '@metrostar/comet-uswds';
-import React, { useEffect, useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
+import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Case } from '@src/types';
 
-export type ApplicationCategory = 'Permit' | 'License' | 'Certification';
 export type ApplicationStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface ApplicationRow {
@@ -17,7 +17,7 @@ export interface ApplicationRow {
 }
 
 interface ApplicationsTableProps {
-  items?: ApplicationRow[];
+  cases?: Case[];
   onNew?: () => void;
 }
 
