@@ -82,9 +82,9 @@ const SAMPLE_ROWS: ApplicationRow[] = [
 
 const getStatusTag = (status: ApplicationStatus): React.ReactElement => {
   const statusClass = {
-    Approved: 'bg-success-darker',
-    Pending: 'bg-warning-dark',
-    Rejected: 'bg-error-dark',
+    Approved: 'bg-success-lighter text-success-darker',
+    Pending: 'bg-warning-lighter text-warning-dark',
+    Rejected: 'bg-error-lighter text-error-dark',
   }[status];
 
   return (
