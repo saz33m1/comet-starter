@@ -94,7 +94,7 @@ const getStatusTag = (status: ApplicationStatus): React.ReactElement => {
   );
 };
 
-const getSlaIndicator = (slaStatus: string, index: number): React.ReactElement => {
+const getSlaIndicator = (slaStatus: string, key: string | number): React.ReactElement => {
   const normalized = slaStatus.toLowerCase();
   let iconType = 'check_circle';
   let iconClass = 'text-success';
@@ -112,22 +112,64 @@ const getSlaIndicator = (slaStatus: string, index: number): React.ReactElement =
 
   return (
     <span className="display-flex flex-align-center gap-1">
-      <Icon id={`sla-icon-${index}`} type={iconType} className={iconClass} />
+      <Icon id={`sla-icon-${key}`} type={iconType} className={iconClass} />
       <span>{slaStatus}</span>
     </span>
   );
 };
 
-export const ApplicationsTable = ({ items, onNew }: ApplicationsTableProps): React.ReactElement => {
+const mapCaseStatusToApplicationStatus = (status: Case['status']): ApplicationStatus => {
+  switch (status) {
+    case 'Approved':
+      return 'Approved';
+    case 'Denied':
+      return 'Rejected';
+    case 'In Progress':
+    case 'Not Started':
+    default:
+      return 'Pending';
+  }
+};
+
+const deriveSlaStatus = (status: Case['status'], index: number): string => {
+  switch (status) {
+    case 'Approved':
+      return 'Met';
+    case 'Denied':
+      return 'Not Met';
+    case 'In Progress':
+      return index % 2 === 0 ? 'In Progress (5 days left)' : 'At Risk (2 days left)';
+    case 'Not Started':
+    default:
+      return 'In Progress (5 days left)';
+  }
+};
+
+const mapCasesToApplicationRows = (cases: Case[]): ApplicationRow[] =>
+  cases.map((caseItem, index) => {
+    const label = APPLICATION_TYPE_ORDER[index % APPLICATION_TYPE_ORDER.length];
+    const applicationStatus = mapCaseStatusToApplicationStatus(caseItem.status);
+
+    return {
+      id: caseItem.id,
+      applicationType: label,
+      submissionDate: new Date(caseItem.created_at).toLocaleDateString('en-US'),
+      status: applicationStatus,
+      slaStatus: deriveSlaStatus(caseItem.status, index),
+      detailsUrl: `/cases/${caseItem.id}`,
+    };
+  });
+
+export const ApplicationsTable = ({ cases, onNew }: ApplicationsTableProps): React.ReactElement => {
   const [data, setData] = useState<ApplicationTableData[]>([]);
-  const rows = items && items.length > 0 ? items : SAMPLE_ROWS;
 
   useEffect(() => {
-    const mapped = rows.map((row, idx) => ({
+    const sourceRows = cases && cases.length > 0 ? mapCasesToApplicationRows(cases) : SAMPLE_ROWS;
+    const mapped = sourceRows.map((row) => ({
       applicationType: row.applicationType,
       submissionDate: row.submissionDate,
       status: getStatusTag(row.status),
-      slaStatus: getSlaIndicator(row.slaStatus, idx),
+      slaStatus: getSlaIndicator(row.slaStatus, row.id),
       actions: (
         <NavLink id={`application-details-${row.id}`} to={row.detailsUrl}>
           View Details
@@ -135,7 +177,7 @@ export const ApplicationsTable = ({ items, onNew }: ApplicationsTableProps): Rea
       ),
     }));
     setData(mapped);
-  }, [rows]);
+  }, [cases]);
 
   const columns = useMemo<ColumnDef<ApplicationTableData>[]>(
     () => [
