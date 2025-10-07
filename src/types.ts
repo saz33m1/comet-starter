@@ -1,4 +1,3 @@
-// Case Types
 export interface Applicant {
   id: number;
   first_name: string;
@@ -52,4 +51,27 @@ export interface User {
   displayName: string | undefined;
   emailAddress: string | undefined;
   phoneNumber: string | undefined;
+}
+
+// Application Types
+export type ApplicationType =
+  | 'Building Permit'
+  | 'Business License'
+  | 'Professional Certification'
+  | 'Event Permit'
+  | 'Zoning Variance';
+
+export type ApplicationStatusType = 'Submitted' | 'Reviewed' | 'Approved' | 'Rejected';
+
+export interface Application {
+  id: number;
+  type: ApplicationType;
+  status: ApplicationStatusType;
+  submission_date: Date;
+  applicant_name?: string;
+  description?: string;
+}
+
+export interface ApplicationItems {
+  items: Application[];
 }

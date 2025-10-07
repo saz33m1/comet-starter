@@ -7,6 +7,7 @@ import { ProtectedRoute } from './components/protected-route/protected-route';
 import { About } from './pages/about/about';
 import { CaseDetails } from './pages/case-details/case-details';
 import { ContactUs } from './pages/contact-us/contact-us';
+import { ApplicationDetails } from './pages/application-details/application-details';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Home } from './pages/home/home';
 import { NotFound } from './pages/not-found/not-found';
@@ -28,6 +29,7 @@ export const App = (): React.ReactElement => (
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/cases/:id" element={<CaseDetails />} />
+          <Route path="/applications/:id" element={<ApplicationDetails />} />
           <Route path="/results" element={<SearchResults />} />
           <Route path="/form1" element={<Form1 />} />
         </Route>

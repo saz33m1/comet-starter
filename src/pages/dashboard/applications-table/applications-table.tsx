@@ -3,7 +3,7 @@ import { Button, Icon } from '@metrostar/comet-uswds';
 import { ColumnDef } from '@tanstack/react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Case } from '@src/types';
+import { Case, Application } from '@src/types';
 
 export type ApplicationStatus = 'Approved' | 'Reviewed' | 'Submitted' | 'Rejected';
 
@@ -18,6 +18,7 @@ export interface ApplicationRow {
 
 interface ApplicationsTableProps {
   cases?: Case[];
+  applications?: Application[];
   onNew?: () => void;
 }
 
@@ -168,15 +169,32 @@ const mapCasesToApplicationRows = (cases: Case[]): ApplicationRow[] =>
       submissionDate: new Date(caseItem.created_at).toLocaleDateString('en-US'),
       status: applicationStatus,
       slaStatus: deriveSlaStatus(caseItem.status, index),
-      detailsUrl: `/cases/${caseItem.id}`,
+      detailsUrl: `/applications/${caseItem.id}`,
     };
   });
 
-export const ApplicationsTable = ({ cases, onNew }: ApplicationsTableProps): React.ReactElement => {
+const mapApplicationsToRows = (apps: Application[]): ApplicationRow[] =>
+  apps.map((a) => ({
+    id: a.id,
+    applicationType: a.type,
+    submissionDate: new Date(a.submission_date).toLocaleDateString('en-US'),
+    status: a.status as ApplicationStatus,
+    slaStatus:
+      a.status === 'Approved'
+        ? 'Met'
+        : a.status === 'Rejected'
+        ? 'Not Met'
+        : 'In Progress (5 days left)',
+    detailsUrl: `/applications/${a.id}`,
+  }));
+
+export const ApplicationsTable = ({ cases, applications, onNew }: ApplicationsTableProps): React.ReactElement => {
   const [data, setData] = useState<ApplicationTableData[]>([]);
 
   useEffect(() => {
-    const sourceRows = cases && cases.length > 0 ? mapCasesToApplicationRows(cases) : SAMPLE_ROWS;
+    const fromApps = applications && applications.length > 0 ? mapApplicationsToRows(applications) : undefined;
+    const fromCases = !fromApps && cases && cases.length > 0 ? mapCasesToApplicationRows(cases) : undefined;
+    const sourceRows = fromApps || fromCases || SAMPLE_ROWS;
     const limited = sourceRows.slice(0, MAX_APPLICATION_ROWS);
     const mapped = limited.map((row) => ({
       applicationType: row.applicationType,
@@ -184,7 +202,7 @@ export const ApplicationsTable = ({ cases, onNew }: ApplicationsTableProps): Rea
       status: getStatusTag(row.status),
       slaStatus: getSlaIndicator(row.slaStatus, row.id),
       actions: (
-        <NavLink id={`application-details-${row.id}`} to={row.detailsUrl}>
+        <NavLink id={`application-details-${row.id}`} to={`/applications/${row.id}`}>
           View Details
         </NavLink>
       ),
