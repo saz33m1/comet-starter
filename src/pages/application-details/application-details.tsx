@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Icon } from '@metrostar/comet-uswds';
+import { Card, CardBody, Icon } from '@metrostar/comet-uswds';
 import useApplicationsApi from '@src/hooks/use-applications-api';
 import React from 'react';
 import { useParams } from 'react-router-dom';
