@@ -8,7 +8,7 @@ import {
 } from '@metrostar/comet-uswds';
 import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
 import { useForm } from '@tanstack/react-form';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './my-account.scss';
 
 type ProfileSectionId =
