@@ -121,7 +121,7 @@ export const fetchAccountProfile = async (): Promise<AccountProfileData> => {
   }
 
   if (!data) {
-    const fallback = ACCOUNT_PROFILE_DATA;
+    const fallback = cloneProfileData();
     await client
       .from(TABLE_NAME)
       .upsert(toRow(fallback), { onConflict: 'id' });
