@@ -232,7 +232,7 @@ const ProfileSectionCard = ({
                 <Button
                   id={`${section.id}-save`}
                   type="submit"
-                  outline
+                  variant="outline"
                   disabled={isSubmitting || !isDirty}
                 >
                   Save changes
