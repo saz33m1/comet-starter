@@ -130,31 +130,27 @@ const profileSections: ProfileSectionConfig[] = [
   },
 ];
 
-const profileSectionDefaults: Record<
-  ProfileSectionId,
-  Record<string, string>
-> = {
-  'profile-name': { ...ACCOUNT_PROFILE_DATA.name },
-  'profile-email': { ...ACCOUNT_PROFILE_DATA.email },
-  'profile-phone': { ...ACCOUNT_PROFILE_DATA.phone },
-  'profile-address': { ...ACCOUNT_PROFILE_DATA.address },
-};
-
 interface ProfileSectionCardProps {
   section: ProfileSectionConfig;
   defaultValues: Record<string, string>;
+  onSave: (values: Record<string, string>) => void;
 }
 
 const ProfileSectionCard = ({
   section,
   defaultValues,
+  onSave,
 }: ProfileSectionCardProps): React.ReactElement => {
   const form = useForm<Record<string, string>>({
     defaultValues,
     onSubmit: async ({ value }) => {
-      console.info(`Profile section ${section.id} updated`, value);
+      onSave(value);
     },
   });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [defaultValues, form]);
 
   return (
     <Card
