@@ -136,6 +136,7 @@ const toRow = (payload: AccountProfileData): AccountProfileRow => ({
   city: payload.address.city,
   state: payload.address.state,
   postal_code: payload.address.postalCode,
+  business_entities: payload.businessEntities.map(fromBusinessEntity),
   updated_at: new Date().toISOString(),
 });
 
