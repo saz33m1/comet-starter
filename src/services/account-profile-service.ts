@@ -49,6 +49,30 @@ const cloneBusinessEntities = (
   entities: BusinessEntityDetails[] = [],
 ): BusinessEntityDetails[] => entities.map(cloneBusinessEntity);
 
+const toBusinessEntity = (row: BusinessEntityRow): BusinessEntityDetails => ({
+  id: row.id,
+  entityName: row.entity_name,
+  entityType: row.entity_type,
+  registrationNumber: row.registration_number,
+  registeredAgent: {
+    name: row.registered_agent_name,
+    email: row.registered_agent_email,
+    phone: row.registered_agent_phone,
+    address: row.registered_agent_address,
+  },
+});
+
+const fromBusinessEntity = (entity: BusinessEntityDetails): BusinessEntityRow => ({
+  id: entity.id,
+  entity_name: entity.entityName,
+  entity_type: entity.entityType,
+  registration_number: entity.registrationNumber,
+  registered_agent_name: entity.registeredAgent.name,
+  registered_agent_email: entity.registeredAgent.email,
+  registered_agent_phone: entity.registeredAgent.phone,
+  registered_agent_address: entity.registeredAgent.address,
+});
+
 const cloneProfileData = (
   data: AccountProfileData = ACCOUNT_PROFILE_DATA,
 ): AccountProfileData => ({
