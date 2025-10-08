@@ -72,7 +72,7 @@ describe('MyAccount', () => {
   });
 
   test('should persist updates after saving section', async () => {
-    render(componentWrapper);
+    renderComponent();
 
     const firstNameInput = screen.getByLabelText('First Name');
     const nameForm = firstNameInput.closest('form');
