@@ -67,6 +67,17 @@ describe('MyAccount', () => {
     expect(screen.getByLabelText('Address Line 1')).toHaveValue(
       ACCOUNT_PROFILE_DATA.address.addressLine1,
     );
+
+    const entityCards = screen.getAllByTestId('business-entity-card');
+    expect(entityCards).toHaveLength(ACCOUNT_PROFILE_DATA.businessEntities.length);
+
+    const firstEntityCard = entityCards[0];
+    expect(within(firstEntityCard).getByLabelText('Entity Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.businessEntities[0].entityName,
+    );
+    expect(within(firstEntityCard).getByLabelText('Registered Agent Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.businessEntities[0].registeredAgent.name,
+    );
   });
 
   test('should persist updates after saving section', async () => {
