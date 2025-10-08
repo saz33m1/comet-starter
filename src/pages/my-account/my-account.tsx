@@ -188,14 +188,16 @@ const ProfileSectionCard = ({
       <CardBody>
         <h2 id={section.id}>{section.heading}</h2>
         <p>{section.description}</p>
-        {status === 'success' && (
+        {status !== 'idle' && (
           <Alert
-            id={`${section.id}-success`}
-            type="success"
-            heading="Success"
+            id={`${section.id}-status`}
+            type={status === 'error' ? 'error' : 'success'}
+            heading={status === 'error' ? 'Save failed' : 'Success'}
             className="my-account-page__status"
           >
-            Changes saved successfully.
+            {status === 'error'
+              ? 'We could not save your changes. Please try again.'
+              : 'Changes saved successfully.'}
           </Alert>
         )}
         <Form
