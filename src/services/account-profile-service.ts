@@ -119,6 +119,7 @@ const toDomain = (row: AccountProfileRow): AccountProfileData => ({
     state: row.state,
     postalCode: row.postal_code,
   },
+  businessEntities: (row.business_entities ?? []).map(toBusinessEntity),
 });
 
 const toRow = (payload: AccountProfileData): AccountProfileRow => ({
