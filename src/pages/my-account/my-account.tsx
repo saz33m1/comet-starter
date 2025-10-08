@@ -1,33 +1,222 @@
-import { Card, CardBody } from '@metrostar/comet-uswds';
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  CardBody,
+  Form,
+  TextInput,
+} from '@metrostar/comet-uswds';
+import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
+import { useForm } from '@tanstack/react-form';
 import React from 'react';
 import './my-account.scss';
 
-const profileSections = [
+type ProfileSectionId =
+  | 'profile-name'
+  | 'profile-email'
+  | 'profile-phone'
+  | 'profile-address';
+
+type ProfileFieldConfig = {
+  name: string;
+  label: string;
+  type?: string;
+  autoComplete?: string;
+};
+
+type ProfileSectionConfig = {
+  id: ProfileSectionId;
+  heading: string;
+  description: string;
+  fields: ProfileFieldConfig[];
+};
+
+const profileSections: ProfileSectionConfig[] = [
   {
     id: 'profile-name',
     heading: 'Name',
     description:
       'Review the legal and preferred names associated with your account. Ensure these details match your official documentation.',
+    fields: [
+      {
+        name: 'firstName',
+        label: 'First Name',
+        autoComplete: 'given-name',
+      },
+      {
+        name: 'middleName',
+        label: 'Middle Name',
+        autoComplete: 'additional-name',
+      },
+      {
+        name: 'lastName',
+        label: 'Last Name',
+        autoComplete: 'family-name',
+      },
+    ],
   },
   {
     id: 'profile-email',
     heading: 'Email',
     description:
       'Confirm your primary email address and add alternate addresses to stay informed about application updates.',
+    fields: [
+      {
+        name: 'primaryEmail',
+        label: 'Primary Email',
+        type: 'email',
+        autoComplete: 'email',
+      },
+      {
+        name: 'alternateEmail',
+        label: 'Alternate Email',
+        type: 'email',
+        autoComplete: 'email',
+      },
+    ],
   },
   {
     id: 'profile-phone',
     heading: 'Phone',
     description:
       'Keep your primary phone number current so our team can reach you about time-sensitive notices or approvals.',
+    fields: [
+      {
+        name: 'primaryPhone',
+        label: 'Primary Phone',
+        type: 'tel',
+        autoComplete: 'tel',
+      },
+      {
+        name: 'alternatePhone',
+        label: 'Alternate Phone',
+        type: 'tel',
+        autoComplete: 'tel',
+      },
+    ],
   },
   {
     id: 'profile-address',
     heading: 'Residential Address',
     description:
       'Maintain an up-to-date residential address to ensure all mailed correspondence reaches you without delay.',
+    fields: [
+      {
+        name: 'addressLine1',
+        label: 'Address Line 1',
+        autoComplete: 'address-line1',
+      },
+      {
+        name: 'addressLine2',
+        label: 'Address Line 2',
+        autoComplete: 'address-line2',
+      },
+      {
+        name: 'city',
+        label: 'City',
+        autoComplete: 'address-level2',
+      },
+      {
+        name: 'state',
+        label: 'State',
+        autoComplete: 'address-level1',
+      },
+      {
+        name: 'postalCode',
+        label: 'ZIP Code',
+        autoComplete: 'postal-code',
+      },
+    ],
   },
 ];
+
+const profileSectionDefaults: Record<
+  ProfileSectionId,
+  Record<string, string>
+> = {
+  'profile-name': { ...ACCOUNT_PROFILE_DATA.name },
+  'profile-email': { ...ACCOUNT_PROFILE_DATA.email },
+  'profile-phone': { ...ACCOUNT_PROFILE_DATA.phone },
+  'profile-address': { ...ACCOUNT_PROFILE_DATA.address },
+};
+
+interface ProfileSectionCardProps {
+  section: ProfileSectionConfig;
+  defaultValues: Record<string, string>;
+}
+
+const ProfileSectionCard = ({
+  section,
+  defaultValues,
+}: ProfileSectionCardProps): React.ReactElement => {
+  const form = useForm<Record<string, string>>({
+    defaultValues,
+    onSubmit: async ({ value }) => {
+      console.info(`Profile section ${section.id} updated`, value);
+    },
+  });
+
+  return (
+    <Card
+      id={`my-account-card-${section.id}`}
+      className="my-account-page__card"
+    >
+      <CardBody>
+        <h2 id={section.id}>{section.heading}</h2>
+        <p>{section.description}</p>
+        <Form
+          id={`${section.id}-form`}
+          className="my-account-page__form"
+          onSubmit={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          {section.fields.map((field) => (
+            <form.Field key={field.name} name={field.name}>
+              {(fieldApi) => (
+                <TextInput
+                  id={`${section.id}-${field.name}`}
+                  name={field.name}
+                  label={field.label}
+                  type={field.type ?? 'text'}
+                  autoComplete={field.autoComplete}
+                  value={fieldApi.state.value}
+                  onChange={(event) => fieldApi.handleChange(event.target.value)}
+                  onBlur={fieldApi.handleBlur}
+                />
+              )}
+            </form.Field>
+          ))}
+          <ButtonGroup className="my-account-page__actions">
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button
+                  id={`${section.id}-save`}
+                  type="submit"
+                  disabled={!canSubmit || isSubmitting}
+                >
+                  Save changes
+                </Button>
+              )}
+            </form.Subscribe>
+            <Button
+              id={`${section.id}-reset`}
+              type="button"
+              variant="secondary"
+              onClick={() => form.reset()}
+            >
+              Reset
+            </Button>
+          </ButtonGroup>
+        </Form>
+      </CardBody>
+    </Card>
+  );
+};
 
 export const MyAccount = (): React.ReactElement => {
   return (
@@ -56,16 +245,11 @@ export const MyAccount = (): React.ReactElement => {
           </header>
           <div className="my-account-page__cards">
             {profileSections.map((section) => (
-              <Card
-                id={`my-account-card-${section.id}`}
+              <ProfileSectionCard
                 key={section.id}
-                className="my-account-page__card"
-              >
-                <CardBody>
-                  <h2 id={section.id}>{section.heading}</h2>
-                  <p>{section.description}</p>
-                </CardBody>
-              </Card>
+                section={section}
+                defaultValues={profileSectionDefaults[section.id]}
+              />
             ))}
           </div>
         </section>
