@@ -132,7 +132,7 @@ export const fetchAccountProfile = async (): Promise<AccountProfileData> => {
 
   if (error) {
     console.warn('Unable to fetch profile from Supabase:', error.message);
-    return ACCOUNT_PROFILE_DATA;
+    return setLocalProfile(ACCOUNT_PROFILE_DATA);
   }
 
   if (!data) {
@@ -140,10 +140,11 @@ export const fetchAccountProfile = async (): Promise<AccountProfileData> => {
     await client
       .from(TABLE_NAME)
       .upsert(toRow(fallback), { onConflict: 'id' });
-    return fallback;
+    return setLocalProfile(fallback);
   }
 
-  return toDomain(data);
+  const domainProfile = toDomain(data);
+  return setLocalProfile(domainProfile);
 };
 
 export const updateAccountProfileSection = async (
