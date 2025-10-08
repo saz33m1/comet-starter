@@ -271,9 +271,7 @@ const getSectionValues = (
 };
 
 export const MyAccount = (): React.ReactElement => {
-  const [profileData, setProfileData] = useState<AccountProfileData>(() =>
-    cloneProfileData(),
-  );
+  const queryClient = useQueryClient();
   const [saveStatus, setSaveStatus] = useState<Record<ProfileSectionId, SaveStatus>>(
     () => buildInitialSaveStatus(),
   );
@@ -288,42 +286,61 @@ export const MyAccount = (): React.ReactElement => {
     [],
   );
 
-  const handleSave = (
+  const { data: profileData, isLoading, isError } = useQuery({
+    queryKey: ['account-profile'],
+    queryFn: fetchAccountProfile,
+    staleTime: 60_000,
+  });
+
+  const mutation = useMutation({
+    mutationFn: ({
+      sectionId,
+      values,
+    }: {
+      sectionId: ProfileSectionId;
+      values: Record<string, string>;
+    }) => updateAccountProfileSection(sectionId, values),
+    onSuccess: (updatedProfile, variables) => {
+      queryClient.setQueryData(['account-profile'], updatedProfile);
+      setSaveStatus((previous) => ({ ...previous, [variables.sectionId]: 'success' }));
+
+      if (saveTimeouts.current[variables.sectionId]) {
+        window.clearTimeout(saveTimeouts.current[variables.sectionId]);
+      }
+
+      saveTimeouts.current[variables.sectionId] = window.setTimeout(() => {
+        setSaveStatus((previous) => ({ ...previous, [variables.sectionId]: 'idle' }));
+      }, SUCCESS_MESSAGE_TIMEOUT);
+    },
+    onError: (_error, variables) => {
+      setSaveStatus((previous) => ({ ...previous, [variables.sectionId]: 'error' }));
+
+      if (saveTimeouts.current[variables.sectionId]) {
+        window.clearTimeout(saveTimeouts.current[variables.sectionId]);
+      }
+
+      saveTimeouts.current[variables.sectionId] = window.setTimeout(() => {
+        setSaveStatus((previous) => ({ ...previous, [variables.sectionId]: 'idle' }));
+      }, SUCCESS_MESSAGE_TIMEOUT);
+    },
+  });
+
+  const handleSave = async (
     sectionId: ProfileSectionId,
     values: Record<string, string>,
-  ): void => {
-    setProfileData((previous) => {
-      switch (sectionId) {
-        case 'profile-name':
-          return { ...previous, name: { ...previous.name, ...values } };
-        case 'profile-email':
-          return { ...previous, email: { ...previous.email, ...values } };
-        case 'profile-phone':
-          return { ...previous, phone: { ...previous.phone, ...values } };
-        case 'profile-address':
-        default:
-          return { ...previous, address: { ...previous.address, ...values } };
-      }
-    });
-
-    setSaveStatus((previous) => ({ ...previous, [sectionId]: 'success' }));
-
-    if (saveTimeouts.current[sectionId]) {
-      window.clearTimeout(saveTimeouts.current[sectionId]);
-    }
-
-    saveTimeouts.current[sectionId] = window.setTimeout(() => {
-      setSaveStatus((previous) => ({ ...previous, [sectionId]: 'idle' }));
-    }, SUCCESS_MESSAGE_TIMEOUT);
+  ): Promise<void> => {
+    await mutation.mutateAsync({ sectionId, values });
   };
+
+  const resolvedProfile = profileData ?? cloneProfileData();
 
   const sectionDefaults = useMemo(
     () =>
       profileSections.reduce((accumulator, section) => {
-        accumulator[section.id] = getSectionValues(section.id, profileData);
+        accumulator[section.id] = getSectionValues(section.id, resolvedProfile);
         return accumulator;
       }, {} as Record<ProfileSectionId, Record<string, string>>),
-    [profileData],
+    [resolvedProfile],
   );
 
   return (
@@ -350,17 +367,32 @@ export const MyAccount = (): React.ReactElement => {
             <h1>My Account</h1>
             <p>Use this page to review and manage your account information.</p>
           </header>
-          <div className="my-account-page__cards">
-            {profileSections.map((section) => (
-              <ProfileSectionCard
-                key={section.id}
-                section={section}
-                defaultValues={sectionDefaults[section.id]}
-                status={saveStatus[section.id]}
-                onSave={(values) => handleSave(section.id, values)}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="my-account-page__loading">
+              <CometSpinner id="account-profile-loading" type="large" loadingText="Loading profile..." />
+            </div>
+          ) : isError ? (
+            <Alert
+              id="account-profile-error"
+              type="error"
+              heading="Unable to load profile"
+              className="my-account-page__status"
+            >
+              We were unable to load your account information. Please verify your Supabase connection and try again.
+            </Alert>
+          ) : (
+            <div className="my-account-page__cards">
+              {profileSections.map((section) => (
+                <ProfileSectionCard
+                  key={section.id}
+                  section={section}
+                  defaultValues={sectionDefaults[section.id]}
+                  status={saveStatus[section.id]}
+                  onSave={(values) => handleSave(section.id, values)}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </div>
