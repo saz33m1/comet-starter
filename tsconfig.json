@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
 
-    /* Bundler mode */
+    
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -16,22 +16,23 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Testing */
+    
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
 
-    /* Linting */
+    
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* Paths */
+    
     "paths": {
       "@src/components/*": ["src/components/*"],
       "@src/data/*": ["src/data/*"],
       "@src/features/*": ["src/features/*"],
       "@src/hooks/*": ["src/hooks/*"],
       "@src/pages/*": ["src/pages/*"],
+      "@src/services/*": ["src/services/*"],
       "@src/types": ["src/types.ts"],
       "@src/utils/*": ["src/utils/*"]
     }
