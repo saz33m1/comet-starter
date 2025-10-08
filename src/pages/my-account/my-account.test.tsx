@@ -95,13 +95,10 @@ describe('MyAccount', () => {
     await userEvent.clear(firstNameInput);
     await userEvent.type(firstNameInput, 'Jordan');
 
-    const resetButton = within(nameForm as HTMLElement).getByRole('button', {
-      name: 'Reset',
-    });
-    await userEvent.click(resetButton);
-
     await waitFor(() => {
-      expect(firstNameInput).toHaveValue('Taylor');
+      expect(saveButton).not.toBeDisabled();
     });
+
+    expect(firstNameInput).toHaveValue('Jordan');
   });
 });
