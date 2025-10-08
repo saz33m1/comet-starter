@@ -19,6 +19,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   fetchAccountProfile,
   updateAccountProfileSection,
+  updateBusinessEntities,
 } from '@src/services/account-profile-service';
 import './my-account.scss';
 
