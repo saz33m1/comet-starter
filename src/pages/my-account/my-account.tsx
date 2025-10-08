@@ -231,6 +231,10 @@ const cloneProfileData = (): AccountProfileData => ({
   email: { ...ACCOUNT_PROFILE_DATA.email },
   phone: { ...ACCOUNT_PROFILE_DATA.phone },
   address: { ...ACCOUNT_PROFILE_DATA.address },
+  businessEntities: ACCOUNT_PROFILE_DATA.businessEntities.map((entity) => ({
+    ...entity,
+    registeredAgent: { ...entity.registeredAgent },
+  })),
 });
 
 const buildInitialSaveStatus = (): Record<ProfileSectionId, SaveStatus> =>
