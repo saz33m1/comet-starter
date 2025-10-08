@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MyAccount } from './my-account';
 
 const sectionHeadings = ['Name', 'Email', 'Phone', 'Residential Address'];
+const navigationLinks = [...sectionHeadings, 'Business Entities'];
 
 describe('MyAccount', () => {
   const renderComponent = () => {
