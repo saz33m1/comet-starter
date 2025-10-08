@@ -332,16 +332,13 @@ export const MyAccount = (): React.ReactElement => {
     await mutation.mutateAsync({ sectionId, values });
   };
 
-  const resolvedProfile = profileData ?? cloneProfileData();
-
-  const sectionDefaults = useMemo(
-    () =>
-      profileSections.reduce((accumulator, section) => {
-        accumulator[section.id] = getSectionValues(section.id, resolvedProfile);
-        return accumulator;
-      }, {} as Record<ProfileSectionId, Record<string, string>>),
-    [resolvedProfile],
-  );
+  const sectionDefaults = useMemo(() => {
+    const resolvedProfile = profileData ?? cloneProfileData();
+    return profileSections.reduce((accumulator, section) => {
+      accumulator[section.id] = getSectionValues(section.id, resolvedProfile);
+      return accumulator;
+    }, {} as Record<ProfileSectionId, Record<string, string>>);
+  }, [profileData]);
 
   return (
     <div className="grid-container my-account-page">
