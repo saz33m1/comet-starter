@@ -203,7 +203,7 @@ const ProfileSectionCard = ({
               id={`${section.id}-reset`}
               type="button"
               variant="secondary"
-              onClick={() => form.reset()}
+              onClick={() => form.reset(defaultValues)}
             >
               Reset
             </Button>
