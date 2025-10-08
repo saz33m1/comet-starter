@@ -20,10 +20,34 @@ type AccountProfileRow = {
   state: string;
   postal_code: string;
   updated_at: string;
+  business_entities: BusinessEntityRow[] | null;
+};
+
+type BusinessEntityRow = {
+  id: string;
+  entity_name: string;
+  entity_type: string;
+  registration_number: string;
+  registered_agent_name: string;
+  registered_agent_email: string;
+  registered_agent_phone: string;
+  registered_agent_address: string;
 };
 
 const TABLE_NAME = 'account_profiles';
 const DEFAULT_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+
+const cloneBusinessEntity = (entity: BusinessEntityDetails): BusinessEntityDetails => ({
+  id: entity.id,
+  entityName: entity.entityName,
+  entityType: entity.entityType,
+  registrationNumber: entity.registrationNumber,
+  registeredAgent: { ...entity.registeredAgent },
+});
+
+const cloneBusinessEntities = (
+  entities: BusinessEntityDetails[] = [],
+): BusinessEntityDetails[] => entities.map(cloneBusinessEntity);
 
 const cloneProfileData = (
   data: AccountProfileData = ACCOUNT_PROFILE_DATA,
@@ -32,6 +56,7 @@ const cloneProfileData = (
   email: { ...data.email },
   phone: { ...data.phone },
   address: { ...data.address },
+  businessEntities: cloneBusinessEntities(data.businessEntities),
 });
 
 let inMemoryProfile: AccountProfileData | null = null;
