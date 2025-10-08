@@ -43,6 +43,86 @@ type ProfileSectionConfig = {
   fields: ProfileFieldConfig[];
 };
 
+type BusinessEntityFormValues = {
+  entityName: string;
+  entityType: string;
+  registrationNumber: string;
+  registeredAgentName: string;
+  registeredAgentEmail: string;
+  registeredAgentPhone: string;
+  registeredAgentAddress: string;
+};
+
+type BusinessEntityState = BusinessEntityDetails & { isNew?: boolean };
+
+type SaveStatus = 'idle' | 'success' | 'error';
+
+const createEntityId = (): string =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `entity-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+const mapEntitiesToState = (
+  entities: BusinessEntityDetails[],
+): BusinessEntityState[] =>
+  entities.map((entity) => ({
+    ...entity,
+    registeredAgent: { ...entity.registeredAgent },
+  }));
+
+const stripBusinessEntityState = (
+  entities: BusinessEntityState[],
+): BusinessEntityDetails[] =>
+  entities.map((entity) => ({
+    id: entity.id,
+    entityName: entity.entityName,
+    entityType: entity.entityType,
+    registrationNumber: entity.registrationNumber,
+    registeredAgent: { ...entity.registeredAgent },
+  }));
+
+const createEmptyBusinessEntity = (): BusinessEntityState => ({
+  id: createEntityId(),
+  entityName: '',
+  entityType: '',
+  registrationNumber: '',
+  registeredAgent: {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+  },
+  isNew: true,
+});
+
+const toBusinessEntityFormValues = (
+  entity: BusinessEntityDetails,
+): BusinessEntityFormValues => ({
+  entityName: entity.entityName,
+  entityType: entity.entityType,
+  registrationNumber: entity.registrationNumber,
+  registeredAgentName: entity.registeredAgent.name,
+  registeredAgentEmail: entity.registeredAgent.email,
+  registeredAgentPhone: entity.registeredAgent.phone,
+  registeredAgentAddress: entity.registeredAgent.address,
+});
+
+const fromBusinessEntityFormValues = (
+  entityId: string,
+  values: BusinessEntityFormValues,
+): BusinessEntityDetails => ({
+  id: entityId,
+  entityName: values.entityName,
+  entityType: values.entityType,
+  registrationNumber: values.registrationNumber,
+  registeredAgent: {
+    name: values.registeredAgentName,
+    email: values.registeredAgentEmail,
+    phone: values.registeredAgentPhone,
+    address: values.registeredAgentAddress,
+  },
+});
+
 type SaveStatus = 'idle' | 'success' | 'error';
 
 const SUCCESS_MESSAGE_TIMEOUT = 4000;
