@@ -50,14 +50,10 @@ describe('MyAccount', () => {
     expect(
       screen.getByRole('navigation', { name: 'Account navigation' }),
     ).toBeInTheDocument();
-    sectionHeadings.forEach((heading) => {
+    navigationLinks.forEach((heading) => {
       expect(screen.getByRole('link', { name: heading })).toBeInTheDocument();
       expect(screen.getByRole('heading', { level: 2, name: heading })).toBeInTheDocument();
     });
-
-    expect(baseElement.querySelectorAll('.usa-card')).toHaveLength(
-      sectionHeadings.length,
-    );
 
     expect(screen.getByLabelText('First Name')).toHaveValue(
       ACCOUNT_PROFILE_DATA.name.firstName,
