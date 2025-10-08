@@ -11,6 +11,7 @@ import { Spinner as CometSpinner } from '@metrostar/comet-extras';
 import {
   ACCOUNT_PROFILE_DATA,
   AccountProfileData,
+  BusinessEntityDetails,
 } from '@src/data/my-account';
 import { useForm } from '@tanstack/react-form';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
