@@ -223,5 +223,5 @@ export const updateAccountProfileSection = async (
     throw new Error(error?.message ?? 'Failed to save account profile.');
   }
 
-  return toDomain(data);
+  return setLocalProfile(toDomain(data));
 };
