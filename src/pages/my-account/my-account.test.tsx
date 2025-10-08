@@ -1,4 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
+import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
 import { Provider } from 'jotai';
 import { AuthProvider } from 'react-oidc-context';
 import { BrowserRouter } from 'react-router-dom';
@@ -31,8 +32,22 @@ describe('MyAccount', () => {
         expect(screen.getByRole('heading', { level: 2, name: heading })).toBeInTheDocument();
       });
     });
+
     expect(baseElement.querySelectorAll('.usa-card')).toHaveLength(
       sectionHeadings.length,
+    );
+
+    expect(screen.getByLabelText('First Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.name.firstName,
+    );
+    expect(screen.getByLabelText('Primary Email')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.email.primaryEmail,
+    );
+    expect(screen.getByLabelText('Primary Phone')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.phone.primaryPhone,
+    );
+    expect(screen.getByLabelText('Address Line 1')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.address.addressLine1,
     );
   });
 });
