@@ -237,15 +237,6 @@ const ProfileSectionCard = ({
                 >
                   Save changes
                 </Button>
-                <Button
-                  id={`${section.id}-reset`}
-                  type="button"
-                  variant="secondary"
-                  disabled={!isDirty}
-                  onClick={() => form.reset(defaultValues)}
-                >
-                  Reset
-                </Button>
               </ButtonGroup>
             )}
           </form.Subscribe>
