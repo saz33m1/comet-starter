@@ -1,6 +1,7 @@
 import {
   ACCOUNT_PROFILE_DATA,
   AccountProfileData,
+  BusinessEntityDetails,
 } from '@src/data/my-account';
 import { getSupabaseClient } from './supabase-client';
 
