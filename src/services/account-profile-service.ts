@@ -225,3 +225,37 @@ export const updateAccountProfileSection = async (
 
   return setLocalProfile(toDomain(data));
 };
+
+export const updateBusinessEntities = async (
+  entities: BusinessEntityDetails[],
+): Promise<AccountProfileData> => {
+  const client = getSupabaseClient();
+  const nextEntities = cloneBusinessEntities(entities);
+
+  if (!client) {
+    const current = getLocalProfile();
+    const updated = setLocalProfile({
+      ...current,
+      businessEntities: nextEntities,
+    });
+    return updated;
+  }
+
+  const current = await fetchAccountProfile();
+  const merged: AccountProfileData = {
+    ...current,
+    businessEntities: nextEntities,
+  };
+
+  const { data, error } = await client
+    .from<AccountProfileRow>(TABLE_NAME)
+    .upsert(toRow(merged), { onConflict: 'id' })
+    .select()
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? 'Failed to save business entities.');
+  }
+
+  return setLocalProfile(toDomain(data));
+};
