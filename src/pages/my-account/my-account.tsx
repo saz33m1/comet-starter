@@ -214,7 +214,45 @@ const ProfileSectionCard = ({
   );
 };
 
+const getSectionValues = (
+  sectionId: ProfileSectionId,
+  data: typeof ACCOUNT_PROFILE_DATA,
+): Record<string, string> => {
+  switch (sectionId) {
+    case 'profile-name':
+      return { ...data.name };
+    case 'profile-email':
+      return { ...data.email };
+    case 'profile-phone':
+      return { ...data.phone };
+    case 'profile-address':
+    default:
+      return { ...data.address };
+  }
+};
+
 export const MyAccount = (): React.ReactElement => {
+  const [profileData, setProfileData] = useState(ACCOUNT_PROFILE_DATA);
+
+  const handleSave = (
+    sectionId: ProfileSectionId,
+    values: Record<string, string>,
+  ): void => {
+    setProfileData((previous) => {
+      switch (sectionId) {
+        case 'profile-name':
+          return { ...previous, name: { ...previous.name, ...values } };
+        case 'profile-email':
+          return { ...previous, email: { ...previous.email, ...values } };
+        case 'profile-phone':
+          return { ...previous, phone: { ...previous.phone, ...values } };
+        case 'profile-address':
+        default:
+          return { ...previous, address: { ...previous.address, ...values } };
+      }
+    });
+  };
+
   return (
     <div className="grid-container my-account-page">
       <div className="grid-row grid-gap-4 my-account-page__layout">
@@ -244,7 +282,8 @@ export const MyAccount = (): React.ReactElement => {
               <ProfileSectionCard
                 key={section.id}
                 section={section}
-                defaultValues={profileSectionDefaults[section.id]}
+                defaultValues={getSectionValues(section.id, profileData)}
+                onSave={(values) => handleSave(section.id, values)}
               />
             ))}
           </div>
