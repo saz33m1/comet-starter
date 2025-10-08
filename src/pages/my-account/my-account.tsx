@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   ButtonGroup,
   Card,
@@ -6,9 +7,12 @@ import {
   Form,
   TextInput,
 } from '@metrostar/comet-uswds';
-import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
+import {
+  ACCOUNT_PROFILE_DATA,
+  AccountProfileData,
+} from '@src/data/my-account';
 import { useForm } from '@tanstack/react-form';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './my-account.scss';
 
 type ProfileSectionId =
@@ -30,6 +34,10 @@ type ProfileSectionConfig = {
   description: string;
   fields: ProfileFieldConfig[];
 };
+
+type SaveStatus = 'idle' | 'success';
+
+const SUCCESS_MESSAGE_TIMEOUT = 4000;
 
 const profileSections: ProfileSectionConfig[] = [
   {
@@ -130,15 +138,30 @@ const profileSections: ProfileSectionConfig[] = [
   },
 ];
 
+const cloneProfileData = (): AccountProfileData => ({
+  name: { ...ACCOUNT_PROFILE_DATA.name },
+  email: { ...ACCOUNT_PROFILE_DATA.email },
+  phone: { ...ACCOUNT_PROFILE_DATA.phone },
+  address: { ...ACCOUNT_PROFILE_DATA.address },
+});
+
+const buildInitialSaveStatus = (): Record<ProfileSectionId, SaveStatus> =>
+  profileSections.reduce((accumulator, section) => {
+    accumulator[section.id] = 'idle';
+    return accumulator;
+  }, {} as Record<ProfileSectionId, SaveStatus>);
+
 interface ProfileSectionCardProps {
   section: ProfileSectionConfig;
   defaultValues: Record<string, string>;
+  status: SaveStatus;
   onSave: (values: Record<string, string>) => void;
 }
 
 const ProfileSectionCard = ({
   section,
   defaultValues,
+  status,
   onSave,
 }: ProfileSectionCardProps): React.ReactElement => {
   const form = useForm<Record<string, string>>({
@@ -160,6 +183,16 @@ const ProfileSectionCard = ({
       <CardBody>
         <h2 id={section.id}>{section.heading}</h2>
         <p>{section.description}</p>
+        {status === 'success' && (
+          <Alert
+            id={`${section.id}-success`}
+            type="success"
+            heading="Success"
+            className="my-account-page__status"
+          >
+            Changes saved successfully.
+          </Alert>
+        )}
         <Form
           id={`${section.id}-form`}
           className="my-account-page__form"
@@ -185,29 +218,28 @@ const ProfileSectionCard = ({
               )}
             </form.Field>
           ))}
-          <ButtonGroup className="my-account-page__actions">
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-            >
-              {([canSubmit, isSubmitting]) => (
+          <form.Subscribe selector={(state) => [state.isSubmitting, state.isDirty]}>
+            {([isSubmitting, isDirty]) => (
+              <ButtonGroup className="my-account-page__actions">
                 <Button
                   id={`${section.id}-save`}
                   type="submit"
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={isSubmitting || !isDirty}
                 >
                   Save changes
                 </Button>
-              )}
-            </form.Subscribe>
-            <Button
-              id={`${section.id}-reset`}
-              type="button"
-              variant="secondary"
-              onClick={() => form.reset(defaultValues)}
-            >
-              Reset
-            </Button>
-          </ButtonGroup>
+                <Button
+                  id={`${section.id}-reset`}
+                  type="button"
+                  variant="secondary"
+                  disabled={!isDirty}
+                  onClick={() => form.reset(defaultValues)}
+                >
+                  Reset
+                </Button>
+              </ButtonGroup>
+            )}
+          </form.Subscribe>
         </Form>
       </CardBody>
     </Card>
@@ -216,7 +248,7 @@ const ProfileSectionCard = ({
 
 const getSectionValues = (
   sectionId: ProfileSectionId,
-  data: typeof ACCOUNT_PROFILE_DATA,
+  data: AccountProfileData,
 ): Record<string, string> => {
   switch (sectionId) {
     case 'profile-name':
@@ -232,7 +264,22 @@ const getSectionValues = (
 };
 
 export const MyAccount = (): React.ReactElement => {
-  const [profileData, setProfileData] = useState(ACCOUNT_PROFILE_DATA);
+  const [profileData, setProfileData] = useState<AccountProfileData>(() =>
+    cloneProfileData(),
+  );
+  const [saveStatus, setSaveStatus] = useState<Record<ProfileSectionId, SaveStatus>>(
+    () => buildInitialSaveStatus(),
+  );
+  const saveTimeouts = useRef<Record<ProfileSectionId, number>>({});
+
+  useEffect(
+    () => () => {
+      Object.values(saveTimeouts.current).forEach((timeoutId) =>
+        window.clearTimeout(timeoutId),
+      );
+    },
+    [],
+  );
 
   const handleSave = (
     sectionId: ProfileSectionId,
@@ -251,7 +298,26 @@ export const MyAccount = (): React.ReactElement => {
           return { ...previous, address: { ...previous.address, ...values } };
       }
     });
+
+    setSaveStatus((previous) => ({ ...previous, [sectionId]: 'success' }));
+
+    if (saveTimeouts.current[sectionId]) {
+      window.clearTimeout(saveTimeouts.current[sectionId]);
+    }
+
+    saveTimeouts.current[sectionId] = window.setTimeout(() => {
+      setSaveStatus((previous) => ({ ...previous, [sectionId]: 'idle' }));
+    }, SUCCESS_MESSAGE_TIMEOUT);
   };
+
+  const sectionDefaults = useMemo(
+    () =>
+      profileSections.reduce((accumulator, section) => {
+        accumulator[section.id] = getSectionValues(section.id, profileData);
+        return accumulator;
+      }, {} as Record<ProfileSectionId, Record<string, string>>),
+    [profileData],
+  );
 
   return (
     <div className="grid-container my-account-page">
@@ -282,7 +348,8 @@ export const MyAccount = (): React.ReactElement => {
               <ProfileSectionCard
                 key={section.id}
                 section={section}
-                defaultValues={getSectionValues(section.id, profileData)}
+                defaultValues={sectionDefaults[section.id]}
+                status={saveStatus[section.id]}
                 onSave={(values) => handleSave(section.id, values)}
               />
             ))}
