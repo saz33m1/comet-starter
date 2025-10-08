@@ -52,4 +52,36 @@ describe('MyAccount', () => {
       ACCOUNT_PROFILE_DATA.address.addressLine1,
     );
   });
+
+  test('should persist updates after saving section', async () => {
+    render(componentWrapper);
+
+    const firstNameInput = screen.getByLabelText('First Name');
+    const nameForm = firstNameInput.closest('form');
+    expect(nameForm).not.toBeNull();
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, 'Taylor');
+
+    const saveButton = within(nameForm as HTMLElement).getByRole('button', {
+      name: 'Save changes',
+    });
+    await userEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(firstNameInput).toHaveValue('Taylor');
+    });
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, 'Jordan');
+
+    const resetButton = within(nameForm as HTMLElement).getByRole('button', {
+      name: 'Reset',
+    });
+    await userEvent.click(resetButton);
+
+    await waitFor(() => {
+      expect(firstNameInput).toHaveValue('Taylor');
+    });
+  });
 });
