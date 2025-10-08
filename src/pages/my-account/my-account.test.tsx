@@ -68,6 +68,8 @@ describe('MyAccount', () => {
     });
     await userEvent.click(saveButton);
 
+    await screen.findByText('Changes saved successfully.');
+
     await waitFor(() => {
       expect(firstNameInput).toHaveValue('Taylor');
     });
