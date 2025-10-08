@@ -40,7 +40,7 @@ type ProfileSectionConfig = {
   fields: ProfileFieldConfig[];
 };
 
-type SaveStatus = 'idle' | 'success';
+type SaveStatus = 'idle' | 'success' | 'error';
 
 const SUCCESS_MESSAGE_TIMEOUT = 4000;
 
