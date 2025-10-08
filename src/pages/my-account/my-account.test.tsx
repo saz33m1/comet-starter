@@ -5,22 +5,40 @@ import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
 import { Provider } from 'jotai';
 import { AuthProvider } from 'react-oidc-context';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MyAccount } from './my-account';
 
 const sectionHeadings = ['Name', 'Email', 'Phone', 'Residential Address'];
+
 describe('MyAccount', () => {
-  const componentWrapper = (
-    <AuthProvider>
-      <Provider>
-        <BrowserRouter>
-          <MyAccount />
-        </BrowserRouter>
-      </Provider>
-    </AuthProvider>
-  );
+  const renderComponent = () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    const view = render(
+      <AuthProvider>
+        <Provider>
+          <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+              <MyAccount />
+            </QueryClientProvider>
+          </BrowserRouter>
+        </Provider>
+      </AuthProvider>,
+    );
+
+    return { view, queryClient };
+  };
 
   test('should render successfully', async () => {
-    const { baseElement } = render(componentWrapper);
+    const {
+      view: { baseElement },
+    } = renderComponent();
     await act(async () => {
       expect(baseElement).toBeTruthy();
       expect(
