@@ -22,11 +22,27 @@ export interface AccountAddressDetails {
   postalCode: string;
 }
 
+export interface BusinessEntityRegisteredAgentDetails {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+export interface BusinessEntityDetails {
+  id: string;
+  entityName: string;
+  entityType: string;
+  registrationNumber: string;
+  registeredAgent: BusinessEntityRegisteredAgentDetails;
+}
+
 export interface AccountProfileData {
   name: AccountNameDetails;
   email: AccountEmailDetails;
   phone: AccountPhoneDetails;
   address: AccountAddressDetails;
+  businessEntities: BusinessEntityDetails[];
 }
 
 export const ACCOUNT_PROFILE_DATA: AccountProfileData = {
@@ -50,4 +66,18 @@ export const ACCOUNT_PROFILE_DATA: AccountProfileData = {
     state: 'DC',
     postalCode: '20500',
   },
+  businessEntities: [
+    {
+      id: 'entity-0001',
+      entityName: 'Metro Innovators LLC',
+      entityType: 'Limited Liability Company',
+      registrationNumber: 'LLC-123456',
+      registeredAgent: {
+        name: 'Jamie Rivera',
+        email: 'jamie.rivera@example.gov',
+        phone: '(555) 901-2345',
+        address: '789 Innovation Way, Washington, DC 20001',
+      },
+    },
+  ],
 };
