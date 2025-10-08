@@ -24,6 +24,15 @@ type AccountProfileRow = {
 const TABLE_NAME = 'account_profiles';
 const DEFAULT_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
 
+const cloneProfileData = (
+  data: AccountProfileData = ACCOUNT_PROFILE_DATA,
+): AccountProfileData => ({
+  name: { ...data.name },
+  email: { ...data.email },
+  phone: { ...data.phone },
+  address: { ...data.address },
+});
+
 const toDomain = (row: AccountProfileRow): AccountProfileData => ({
   name: {
     firstName: row.first_name,
