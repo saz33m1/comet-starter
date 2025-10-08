@@ -33,6 +33,21 @@ const cloneProfileData = (
   address: { ...data.address },
 });
 
+let inMemoryProfile: AccountProfileData | null = null;
+
+const getLocalProfile = (): AccountProfileData => {
+  if (!inMemoryProfile) {
+    inMemoryProfile = cloneProfileData();
+  }
+
+  return cloneProfileData(inMemoryProfile);
+};
+
+const setLocalProfile = (profile: AccountProfileData): AccountProfileData => {
+  inMemoryProfile = cloneProfileData(profile);
+  return cloneProfileData(inMemoryProfile);
+};
+
 const toDomain = (row: AccountProfileRow): AccountProfileData => ({
   name: {
     firstName: row.first_name,
