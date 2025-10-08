@@ -173,7 +173,7 @@ const ProfileSectionCard = ({
   const form = useForm<Record<string, string>>({
     defaultValues,
     onSubmit: async ({ value }) => {
-      onSave(value);
+      await onSave(value);
     },
   });
 
