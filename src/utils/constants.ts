@@ -27,6 +27,10 @@ export const HEADER_LINKS_SIGNED_IN = [
     name: 'Dashboard',
     url: '/dashboard',
   },
+  {
+    name: 'My Account',
+    url: '/my-account',
+  },
 ];
 
 export const HEADER_LINKS_SIGNED_OUT = [
