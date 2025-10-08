@@ -106,7 +106,7 @@ const mergeSection = (
 export const fetchAccountProfile = async (): Promise<AccountProfileData> => {
   const client = getSupabaseClient();
   if (!client) {
-    return ACCOUNT_PROFILE_DATA;
+    return cloneProfileData();
   }
 
   const { data, error } = await client
