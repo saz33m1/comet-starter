@@ -112,4 +112,51 @@ describe('MyAccount', () => {
 
     expect(firstNameInput).toHaveValue('Jordan');
   });
+
+  test('should allow adding and saving a business entity', async () => {
+    renderComponent();
+
+    await screen.findByLabelText('First Name');
+
+    const addEntityButton = screen.getByRole('button', { name: 'Add business entity' });
+    await userEvent.click(addEntityButton);
+
+    const entityCards = screen.getAllByTestId('business-entity-card');
+    const newEntityCard = entityCards[entityCards.length - 1];
+
+    const entityNameInput = within(newEntityCard).getByLabelText('Entity Name');
+    const entityTypeInput = within(newEntityCard).getByLabelText('Entity Type');
+    const registrationInput = within(newEntityCard).getByLabelText('Registration Number');
+    const agentNameInput = within(newEntityCard).getByLabelText('Registered Agent Name');
+    const agentEmailInput = within(newEntityCard).getByLabelText('Registered Agent Email');
+    const agentPhoneInput = within(newEntityCard).getByLabelText('Registered Agent Phone');
+    const agentAddressInput = within(newEntityCard).getByLabelText('Registered Agent Address');
+
+    await userEvent.clear(entityNameInput);
+    await userEvent.type(entityNameInput, 'Beacon Analytics LLC');
+    await userEvent.clear(entityTypeInput);
+    await userEvent.type(entityTypeInput, 'Limited Liability Company');
+    await userEvent.clear(registrationInput);
+    await userEvent.type(registrationInput, 'LLC-987654');
+    await userEvent.clear(agentNameInput);
+    await userEvent.type(agentNameInput, 'Morgan Reed');
+    await userEvent.clear(agentEmailInput);
+    await userEvent.type(agentEmailInput, 'morgan.reed@example.com');
+    await userEvent.clear(agentPhoneInput);
+    await userEvent.type(agentPhoneInput, '(555) 321-7654');
+    await userEvent.clear(agentAddressInput);
+    await userEvent.type(agentAddressInput, '321 Market St, Washington, DC 20002');
+
+    const saveEntityButton = within(newEntityCard).getByRole('button', {
+      name: 'Save business entity',
+    });
+    await userEvent.click(saveEntityButton);
+
+    await within(newEntityCard).findByText('Business entity saved successfully.');
+
+    await waitFor(() => {
+      expect(entityNameInput).toHaveValue('Beacon Analytics LLC');
+    });
+    expect(agentEmailInput).toHaveValue('morgan.reed@example.com');
+  });
 });
