@@ -375,11 +375,11 @@ const BusinessEntityCard = ({
   const entityLabel = entity.entityName || `Business Entity ${index + 1}`;
 
   return (
-    <Card
-      id={`business-entity-card-${entity.id}`}
-      className="my-account-page__entity-card"
-      data-testid="business-entity-card"
-    >
+    <div className="my-account-page__entity-item" data-testid="business-entity-card">
+      <Card
+        id={`business-entity-card-${entity.id}`}
+        className="my-account-page__entity-card"
+      >
       <CardBody>
         <div className="my-account-page__entity-summary">
           <h3>{entityLabel}</h3>
@@ -524,7 +524,8 @@ const BusinessEntityCard = ({
           </form.Subscribe>
         </Form>
       </CardBody>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
