@@ -160,7 +160,7 @@ interface ProfileSectionCardProps {
   section: ProfileSectionConfig;
   defaultValues: Record<string, string>;
   status: SaveStatus;
-  onSave: (values: Record<string, string>) => void;
+  onSave: (values: Record<string, string>) => Promise<void>;
 }
 
 const ProfileSectionCard = ({
