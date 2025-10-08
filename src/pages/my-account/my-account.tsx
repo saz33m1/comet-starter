@@ -13,6 +13,11 @@ import {
 } from '@src/data/my-account';
 import { useForm } from '@tanstack/react-form';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  fetchAccountProfile,
+  updateAccountProfileSection,
+} from '@src/services/account-profile-service';
 import './my-account.scss';
 
 type ProfileSectionId =
