@@ -47,6 +47,13 @@
   .applications-header {
     flex-direction: column;
     align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .applications-header h1 {
+    width: 100%;
+    text-align: left;
   }
 
   .applications-header__cta {
