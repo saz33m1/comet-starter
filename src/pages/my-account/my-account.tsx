@@ -505,8 +505,8 @@ const BusinessEntityCard = ({
                   type="submit"
                   variant="outline"
                   disabled={isSubmitting || !isDirty || isProcessing}
-                >
-                  Save business entity
+>
+                  Save
                 </Button>
                 <Button
                   id={`business-entity-${entity.id}-remove`}
@@ -516,8 +516,8 @@ const BusinessEntityCard = ({
                   onClick={() => {
                     void onRemove();
                   }}
-                >
-                  Remove business entity
+>
+                  Delete
                 </Button>
               </ButtonGroup>
             )}
