@@ -1,0 +1,126 @@
+.applications-section {
+  width: 100%;
+}
+
+.applications-header {
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.applications-header h1 {
+  margin: 0;
+}
+
+.applications-header__cta {
+  margin-left: auto;
+}
+
+.applications-summary {
+  width: 100%;
+}
+
+.applications-summary h2 {
+  margin-bottom: 1rem;
+}
+
+.applications-summary__table {
+  width: 100%;
+}
+
+.applications-summary__table .usa-table,
+.applications-summary__table table {
+  width: 100%;
+}
+
+.applications-summary__cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.applications-summary__cell--actions {
+  justify-content: flex-start;
+}
+
+@media screen and (max-width: 1024px) {
+  .applications-header {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .applications-header h1 {
+    width: 100%;
+    text-align: left;
+  }
+
+  .applications-header__cta {
+    margin-left: 0;
+    width: auto;
+    align-self: flex-start;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .applications-summary__table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .applications-summary__table tbody,
+  .applications-summary__table tr,
+  .applications-summary__table td {
+    display: block;
+    width: 100%;
+  }
+
+  .applications-summary__table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .applications-summary__table tr {
+    border: 1px solid #dfe1e2;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #ffffff;
+  }
+
+  .applications-summary__table td {
+    padding: 0.5rem 0;
+    border: 0;
+  }
+
+  .applications-summary__cell {
+    justify-content: space-between;
+  }
+
+  .applications-summary__cell::before {
+    content: attr(data-label);
+    font-weight: 400;
+    margin-right: 1rem;
+  }
+
+  .applications-summary__cell span,
+  .applications-summary__cell a {
+    text-align: right;
+  }
+
+  .applications-summary__cell--actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .applications-summary__cell--actions::before {
+    margin-bottom: 0.25rem;
+  }
+}

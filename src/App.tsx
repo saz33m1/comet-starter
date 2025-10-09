@@ -14,6 +14,7 @@ import { NotFound } from './pages/not-found/not-found';
 import { SearchResults } from './pages/search-results/search-results';
 import { SignIn } from './pages/sign-in/sign-in';
 import { Form1 } from './pages/form1/form1';
+import { MyAccount } from './pages/my-account/my-account';
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ export const App = (): React.ReactElement => (
         <Route path="/" element={<Home />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/my-account" element={<MyAccount />} />
           <Route path="/cases/:id" element={<CaseDetails />} />
           <Route path="/applications/:id" element={<ApplicationDetails />} />
           <Route path="/results" element={<SearchResults />} />

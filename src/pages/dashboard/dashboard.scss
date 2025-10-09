@@ -1,0 +1,14 @@
+.dashboard-layout {
+  display: grid;
+  gap: 2rem;
+}
+
+.dashboard-card {
+  width: 100%;
+}
+
+@media screen and (max-width: 1024px) {
+  .dashboard-layout {
+    gap: 1.5rem;
+  }
+}

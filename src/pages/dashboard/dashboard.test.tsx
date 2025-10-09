@@ -1,7 +1,7 @@
 import { caseData } from '@src/data/cases';
 import axios from '@src/utils/axios';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { Provider } from 'jotai';
 import { AuthProvider } from 'react-oidc-context';
@@ -43,17 +43,18 @@ describe('Dashboard', () => {
     queryClient.setQueryData(['cases'], caseData.items);
 
     const { baseElement } = render(componentWrapper);
-    await act(async () => {
-      expect(baseElement).toBeTruthy();
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
 
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
-    );
     expect(baseElement.querySelector('.usa-table')).toBeDefined();
     expect(
-      baseElement.querySelectorAll('.usa-table > tbody > tr'),
-    ).toHaveLength(0);
+      screen.getAllByRole('link', { name: 'View Details' }).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Building Permit').length).toBeGreaterThanOrEqual(1);
   });
 
   test('should render loading state while fetching data', async () => {
@@ -71,12 +72,7 @@ describe('Dashboard', () => {
     const { baseElement } = render(componentWrapper);
 
     // Immediately after rendering, we should see the loading state
-    expect(baseElement).toBeTruthy();
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
-    );
-
-    // Check for loading spinner or indicator
+    expect(baseElement.querySelector('h1')).toBeNull();
     expect(baseElement.querySelector('#spinner')).toBeDefined();
     expect(baseElement.querySelector('.usa-table')).toBeNull();
 
@@ -84,6 +80,9 @@ describe('Dashboard', () => {
     await waitFor(() => {
       expect(baseElement.querySelector('#spinner')).toBeNull();
       expect(baseElement.querySelector('.usa-table')).toBeDefined();
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -92,13 +91,14 @@ describe('Dashboard', () => {
     queryClient.setQueryData(['cases'], null);
 
     const { baseElement } = render(componentWrapper);
-    await act(async () => {
-      expect(baseElement).toBeTruthy();
+
+    await waitFor(() => {
+      expect(baseElement.querySelector('.usa-alert--error')).toBeDefined();
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'My Applications' }),
+      ).toBeInTheDocument();
     });
-    expect(baseElement.querySelector('h1')?.textContent).toEqual(
-      'Active Cases',
-    );
+
     expect(baseElement.querySelector('.usa-alert')).toBeDefined();
-    expect(baseElement.querySelector('.usa-alert--error')).toBeDefined();
   });
 });

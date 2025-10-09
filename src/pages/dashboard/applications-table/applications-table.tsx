@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import React, { useEffect, useMemo, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Case, Application } from '@src/types';
+import './applications-table.scss';
 
 export type ApplicationStatus = 'Approved' | 'Reviewed' | 'Submitted' | 'Rejected';
 
@@ -22,13 +23,7 @@ interface ApplicationsTableProps {
   onNew?: () => void;
 }
 
-interface ApplicationTableData {
-  applicationType: string;
-  submissionDate: string;
-  status: React.ReactElement;
-  slaStatus: React.ReactElement;
-  actions: React.ReactElement;
-}
+type ApplicationTableData = ApplicationRow;
 
 const APPLICATION_TYPE_ORDER = [
   'Building Permit',
@@ -196,72 +191,78 @@ export const ApplicationsTable = ({ cases, applications, onNew }: ApplicationsTa
     const fromCases = !fromApps && cases && cases.length > 0 ? mapCasesToApplicationRows(cases) : undefined;
     const sourceRows = fromApps || fromCases || SAMPLE_ROWS;
     const limited = sourceRows.slice(0, MAX_APPLICATION_ROWS);
-    const mapped = limited.map((row) => ({
-      applicationType: row.applicationType,
-      submissionDate: row.submissionDate,
-      status: getStatusTag(row.status),
-      slaStatus: getSlaIndicator(row.slaStatus, row.id),
-      actions: (
-        <NavLink id={`application-details-${row.id}`} to={`/applications/${row.id}`}>
-          View Details
-        </NavLink>
-      ),
-    }));
-    setData(mapped);
-  }, [cases]);
+    setData(limited);
+  }, [applications, cases]);
 
   const columns = useMemo<ColumnDef<ApplicationTableData>[]>(
     () => [
       {
         accessorKey: 'applicationType',
         header: 'Application Type',
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="applications-summary__cell" data-label="Application Type">
+            <span>{info.getValue<string>()}</span>
+          </div>
+        ),
       },
       {
         accessorKey: 'submissionDate',
         header: 'Submission Date',
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <div className="applications-summary__cell" data-label="Submission Date">
+            <span>{info.getValue<string>()}</span>
+          </div>
+        ),
       },
       {
         accessorKey: 'status',
         header: 'Status',
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => (
+          <div className="applications-summary__cell" data-label="Status">
+            {getStatusTag(row.original.status)}
+          </div>
+        ),
       },
       {
         accessorKey: 'slaStatus',
         header: 'SLA Status',
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => (
+          <div className="applications-summary__cell" data-label="SLA Status">
+            {getSlaIndicator(row.original.slaStatus, row.original.id)}
+          </div>
+        ),
       },
       {
-        accessorKey: 'actions',
+        accessorKey: 'detailsUrl',
         header: 'Actions',
         enableSorting: false,
-        cell: (info) => info.getValue(),
+        cell: ({ row }) => (
+          <div className="applications-summary__cell applications-summary__cell--actions" data-label="Actions">
+            <NavLink id={`application-details-${row.original.id}`} to={row.original.detailsUrl}>
+              View Details
+            </NavLink>
+          </div>
+        ),
       },
     ],
     [],
   );
 
   return (
-    <section aria-labelledby="applications-heading">
-      <div className="display-flex flex-justify flex-align-center">
+    <section className="applications-section" aria-labelledby="applications-heading">
+      <div className="applications-header display-flex flex-align-center">
         <h1 id="applications-heading">My Applications</h1>
-        <Button
-          id="new-application"
-          type="button"
-          onClick={onNew}
-          className="margin-left-2"
-        >
+        <Button id="new-application" type="button" onClick={onNew} className="applications-header__cta">
           <Icon id="new-application-icon" type="add" className="margin-right-05" />
           New Application
         </Button>
       </div>
 
-      <div className="margin-top-2">
+      <div className="applications-summary margin-top-2">
         <h2>Application Summary</h2>
         <DataTable
           id="applications-table"
-          className="width-full"
+          className="width-full applications-summary__table"
           columns={columns}
           data={data}
           sortable

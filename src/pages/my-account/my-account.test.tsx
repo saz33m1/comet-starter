@@ -1,0 +1,162 @@
+import { act, render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ACCOUNT_PROFILE_DATA } from '@src/data/my-account';
+import { Provider } from 'jotai';
+import { AuthProvider } from 'react-oidc-context';
+import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MyAccount } from './my-account';
+
+const sectionHeadings = ['Name', 'Email', 'Phone', 'Residential Address'];
+const navigationLinks = [...sectionHeadings, 'Business Entities'];
+
+describe('MyAccount', () => {
+  const renderComponent = () => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+
+    const view = render(
+      <AuthProvider>
+        <Provider>
+          <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+              <MyAccount />
+            </QueryClientProvider>
+          </BrowserRouter>
+        </Provider>
+      </AuthProvider>,
+    );
+
+    return { view, queryClient };
+  };
+
+  test('should render successfully', async () => {
+    const {
+      view: { baseElement },
+    } = renderComponent();
+
+    await screen.findByLabelText('First Name');
+
+    expect(baseElement).toBeTruthy();
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'My Account' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('navigation', { name: 'Account navigation' }),
+    ).toBeInTheDocument();
+    navigationLinks.forEach((heading) => {
+      expect(screen.getByRole('link', { name: heading })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 2, name: heading })).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText('First Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.name.firstName,
+    );
+    expect(screen.getByLabelText('Primary Email')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.email.primaryEmail,
+    );
+    expect(screen.getByLabelText('Primary Phone')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.phone.primaryPhone,
+    );
+    expect(screen.getByLabelText('Address Line 1')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.address.addressLine1,
+    );
+
+    const entityCards = screen.getAllByTestId('business-entity-card');
+    expect(entityCards).toHaveLength(ACCOUNT_PROFILE_DATA.businessEntities.length);
+
+    const firstEntityCard = entityCards[0];
+    expect(within(firstEntityCard).getByLabelText('Entity Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.businessEntities[0].entityName,
+    );
+    expect(within(firstEntityCard).getByLabelText('Registered Agent Name')).toHaveValue(
+      ACCOUNT_PROFILE_DATA.businessEntities[0].registeredAgent.name,
+    );
+  });
+
+  test('should persist updates after saving section', async () => {
+    renderComponent();
+
+    await screen.findByLabelText('First Name');
+
+    const firstNameInput = screen.getByLabelText('First Name');
+    const nameForm = firstNameInput.closest('form');
+    expect(nameForm).not.toBeNull();
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, 'Taylor');
+
+    const saveButton = within(nameForm as HTMLElement).getByRole('button', {
+      name: 'Save changes',
+    });
+    await userEvent.click(saveButton);
+
+    await screen.findByText('Changes saved successfully.');
+
+    await waitFor(() => {
+      expect(firstNameInput).toHaveValue('Taylor');
+    });
+
+    await userEvent.clear(firstNameInput);
+    await userEvent.type(firstNameInput, 'Jordan');
+
+    await waitFor(() => {
+      expect(saveButton).not.toBeDisabled();
+    });
+
+    expect(firstNameInput).toHaveValue('Jordan');
+  });
+
+  test('should allow adding and saving a business entity', async () => {
+    renderComponent();
+
+    await screen.findByLabelText('First Name');
+
+    const addEntityButton = screen.getByRole('button', { name: 'Add business entity' });
+    await userEvent.click(addEntityButton);
+
+    const entityCards = screen.getAllByTestId('business-entity-card');
+    const newEntityCard = entityCards[entityCards.length - 1];
+
+    const entityNameInput = within(newEntityCard).getByLabelText('Entity Name');
+    const entityTypeInput = within(newEntityCard).getByLabelText('Entity Type');
+    const registrationInput = within(newEntityCard).getByLabelText('Registration Number');
+    const agentNameInput = within(newEntityCard).getByLabelText('Registered Agent Name');
+    const agentEmailInput = within(newEntityCard).getByLabelText('Registered Agent Email');
+    const agentPhoneInput = within(newEntityCard).getByLabelText('Registered Agent Phone');
+    const agentAddressInput = within(newEntityCard).getByLabelText('Registered Agent Address');
+
+    await userEvent.clear(entityNameInput);
+    await userEvent.type(entityNameInput, 'Beacon Analytics LLC');
+    await userEvent.clear(entityTypeInput);
+    await userEvent.type(entityTypeInput, 'Limited Liability Company');
+    await userEvent.clear(registrationInput);
+    await userEvent.type(registrationInput, 'LLC-987654');
+    await userEvent.clear(agentNameInput);
+    await userEvent.type(agentNameInput, 'Morgan Reed');
+    await userEvent.clear(agentEmailInput);
+    await userEvent.type(agentEmailInput, 'morgan.reed@example.com');
+    await userEvent.clear(agentPhoneInput);
+    await userEvent.type(agentPhoneInput, '(555) 321-7654');
+    await userEvent.clear(agentAddressInput);
+    await userEvent.type(agentAddressInput, '321 Market St, Washington, DC 20002');
+
+    const saveEntityButton = within(newEntityCard).getByRole('button', {
+      name: 'Save business entity',
+    });
+    await userEvent.click(saveEntityButton);
+
+    await within(newEntityCard).findByText('Business entity saved successfully.');
+
+    await waitFor(() => {
+      expect(entityNameInput).toHaveValue('Beacon Analytics LLC');
+    });
+    expect(agentEmailInput).toHaveValue('morgan.reed@example.com');
+  });
+});
