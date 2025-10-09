@@ -1,7 +1,6 @@
 import { APP_TITLE, FOOTER_LINKS, SOCIAL_LINKS } from '@src/utils/constants';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import logo from '/img/logo.png';
 
 export const Footer = (): React.ReactElement => {
   const scrollToTop = (event: React.MouseEvent<HTMLAnchorElement>): void => {
@@ -59,7 +58,7 @@ export const Footer = (): React.ReactElement => {
               <div className="mobile-lg:grid-col-auto">
                 <img
                   className="usa-footer__logo-img"
-                  src={logo}
+                  src="https://cdn.builder.io/api/v1/image/assets%2Fb7892fc2772a49ccadca7093dfd0b901%2F1bc84c4379d142829303e702d50b80f8"
                   alt="US Flag"
                 />
               </div>
